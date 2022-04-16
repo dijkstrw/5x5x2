@@ -1,7 +1,7 @@
 BINARY = 5x5
 OBJS = 5x5.o automouse.o clock.o command.o debug.o elog.o extrakey.o	\
        flash.o keyboard.o keymap.o led.o macro.o matrix.o mouse.o	\
-       map_ascii.o ring.o serial.o usb.o
+       map_ascii.o ring.o serial.o sk6812.o usb.o
 
 GOJIRA_VERSION   = $(shell git describe --tags --always)
 

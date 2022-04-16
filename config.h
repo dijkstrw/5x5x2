@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2015-2022 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@
 
 #include "usb.h"
 
-#define USB_GPIO       GPIOA
-#define USB_RCC        RCC_GPIOA
-#define USB_BV         (GPIO12)
-#define SERIAL_BUF_SIZEIN  160
-#define SERIAL_BUF_SIZEOUT 1024
+#define USB_GPIO              GPIOA
+#define USB_RCC               RCC_GPIOA
+#define USB_BV                (GPIO12)
+#define SERIAL_BUF_SIZEIN     160
+#define SERIAL_BUF_SIZEOUT    1024
 
 /*
  * Matrix pinout definition:
@@ -45,27 +45,36 @@
  * COLS_DECODE is used after column GPIO reading to get a consecutive bitfield
  */
 
-#define ROWS_NUM        5
-#define ROWS_GPIO       GPIOA
-#define ROWS_RCC        RCC_GPIOA
-#define ROWS_BV         0b11111
+#define ROWS_NUM              5
+#define ROWS_GPIO             GPIOA
+#define ROWS_RCC              RCC_GPIOA
+#define ROWS_BV               0b11111
 
-#define COLS_NUM        5
-#define COLS_GPIO       GPIOB
-#define COLS_RCC        RCC_GPIOB
-#define COLS_BV         0b11000111
-#define COLS_DECODE(x)  (((x >> 3) & 0b11000) | (x & 0b111))
+#define COLS_NUM              5
+#define COLS_GPIO             GPIOB
+#define COLS_RCC              RCC_GPIOB
+#define COLS_BV               0b11000111
+#define COLS_DECODE(x)        (((x >> 3) & 0b11000) | (x & 0b111))
 
-#define LAYERS_NUM      5
+/*
+ * Timeouts:
+ *
+ * Debounce, how long does a key need to be down to be pressed
+ * Enumerate, how long may enumeration take before reset
+ */
+#define MS_DEBOUNCE           10
+#define MS_ENUMERATE          5000
 
-#define MS_DEBOUNCE     10
-#define MS_ENUMERATE    5000
+/*
+ * Number of layers possible in keymap definition
+ */
+#define LAYERS_NUM            5
 
 /*
  * Number of macro keys, and max len of a macro sequence
  */
-#define MACRO_MAXKEYS   12
-#define MACRO_MAXLEN    32
+#define MACRO_MAXKEYS         12
+#define MACRO_MAXLEN          32
 
 /*
  * Amount of userflash to be used to store the configuration.
@@ -73,18 +82,29 @@
  * STM32 flash page size depends on the device:
  * stm32f103xx, with < 128k flash = 1k
  */
-#define FLASH_PAGE_NUM  4
-#define FLASH_PAGE_SIZE 0x400
+#define FLASH_PAGE_NUM        4
+#define FLASH_PAGE_SIZE       0x400
 
-#define LEDS_GPIO       GPIOC
-#define LEDS_RCC        RCC_GPIOC
-#define LEDS_BV         (GPIO13 | GPIO14 | GPIO15)
-#define LED1IO          GPIO13
-#define LED2IO          GPIO14
-#define LED3IO          GPIO15
+#define LEDS_GPIO             GPIOC
+#define LEDS_RCC              RCC_GPIOC
+#define LEDS_BV               (GPIO13 | GPIO14 | GPIO15)
+#define LED1IO                GPIO13
+#define LED2IO                GPIO14
+#define LED3IO                GPIO15
 
-#define AUTOMOUSE_LED_ACTIVE   (1<<2)
-#define AUTOMOUSE_LED_PRESS    (1<<1)
-#define MACRO_LED_ACTIVE       (1<<2)
+#define AUTOMOUSE_LED_ACTIVE  (1<<2)
+#define AUTOMOUSE_LED_PRESS   (1<<1)
+#define MACRO_LED_ACTIVE      (1<<2)
+
+/*
+ * Backlight
+ */
+#define SPI_RCC               RCC_SPI1
+#define SPI_GPIO_RCC          RCC_GPIOA
+#define SPI_GPIO              GPIOA
+#define SPI_BV                GPIO7
+#define SPI_IF                SPI1
+
+#define BACKLIGHT_LEDS_NUM    25
 
 #endif /* _CONFIG_H */
