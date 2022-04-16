@@ -49,6 +49,7 @@
  *
  */
 
+#include <limits.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -119,38 +120,65 @@ sk6812_reset()
     }
 }
 
+/*
+ * ARM Cortex M3/M4 can bitband; map individual bits of an byte into a
+ * separate address range, where the bits are blown up to words to
+ * make them easily accessible.
+ */
+
+#define SRAM_BASE_BITBAND	(0x22000000U)
+
+/*
+ * BBADDR(addr)
+ *
+ * Given a normal SRAM address, map to the bitband equivalent.
+ *
+ * Note that BBADDR returns the BB address of addr at bit 0.
+ */
+#define BBADDR(addr)                                                    \
+    (uint32_t *)(((((uint32_t)addr) & 0x0FFFFF) << 5) | SRAM_BASE_BITBAND)
+
+/*
+ * BBOFFSET(byte, bit)
+ *
+ * Calculate the offset to add to a start bitbanded address when we
+ * want to access a bit in a byte further on.
+ *
+ * Note that this offset only works when added to uint32_t, as it
+ * defines the number of 32 bit words to shift.
+ */
+#define BBOFFSET(byte, bit)  (byte << 3 | bit)
+
 void
 sk6812_render()
 {
     uint8_t inactive_buffer = (active_buffer ^ 1);
-    char *out = (char *)&spi[inactive_buffer][0];
-    char *in = (char *)&frame[0];
+    uint32_t *out = BBADDR(&spi[inactive_buffer][0]);
+    uint32_t *in = BBADDR(&frame[0]);
     uint8_t i, j;
 
     /*
      * Our goal is to get the bits with light info from the
      * framebuffer into the inactive spi buffer.
      *
-     * framebuffer[0].g = bits 87654321
-     * spibuffer[0].g = bits 18017016 01501401 30120110
+     * framebuffer[0].g = bits 76543210
+     * spibuffer[0].g = bits x7xx6xx5 xx4xx3xx 2xx1xx0x
      */
 
-    for (i = 0; i < sizeof(frame[0]); i++) {
-        for (j = 0; j < BACKLIGHT_LEDS_NUM; j++) {
-            BBIO_SRAM(out, 6)  = BBIO_SRAM(in, 7);
-            BBIO_SRAM(out, 3)  = BBIO_SRAM(in, 6);
-            BBIO_SRAM(out, 0)  = BBIO_SRAM(in, 5);
+    for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
+        for (j = 0; j < sizeof(rgbpixel_t); j++) {
+            MMIO32(out + BBOFFSET(2, 1)) = MMIO32(in + BBOFFSET(0, 0));
+            MMIO32(out + BBOFFSET(2, 4)) = MMIO32(in + BBOFFSET(0, 1));
+            MMIO32(out + BBOFFSET(2, 7)) = MMIO32(in + BBOFFSET(0, 2));
+            MMIO32(out + BBOFFSET(1, 2)) = MMIO32(in + BBOFFSET(0, 3));
+            MMIO32(out + BBOFFSET(1, 5)) = MMIO32(in + BBOFFSET(0, 4));
+            MMIO32(out + BBOFFSET(0, 0)) = MMIO32(in + BBOFFSET(0, 5));
+            MMIO32(out + BBOFFSET(0, 3)) = MMIO32(in + BBOFFSET(0, 6));
+            MMIO32(out + BBOFFSET(0 ,6)) = MMIO32(in + BBOFFSET(0, 7));
 
-            out++;
-            BBIO_SRAM(out, 5) = BBIO_SRAM(in, 4);
-            BBIO_SRAM(out, 2) = BBIO_SRAM(in, 3);
-
-            out++;
-            BBIO_SRAM(out, 7) = BBIO_SRAM(in, 2);
-            BBIO_SRAM(out, 4) = BBIO_SRAM(in, 1);
-            BBIO_SRAM(out, 1) = BBIO_SRAM(in, 0);
-
-            in++;
+            /* Jump to next color, 1 byte further for in, 3 for out  */
+            in += BBOFFSET(1, 0);
+            out += BBOFFSET(3, 0);
         }
     }
 }
