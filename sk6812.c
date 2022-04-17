@@ -136,7 +136,7 @@ sk6812_reset()
  * Note that BBADDR returns the BB address of addr at bit 0.
  */
 #define BBADDR(addr)                                                    \
-    (uint32_t *)(((((uint32_t)addr) & 0x0FFFFF) << 5) | SRAM_BASE_BITBAND)
+    (uint8_t *)(((((uint32_t)addr) & 0x0FFFFF) << 5) | SRAM_BASE_BITBAND)
 
 /*
  * BBOFFSET(byte, bit)
@@ -144,17 +144,15 @@ sk6812_reset()
  * Calculate the offset to add to a start bitbanded address when we
  * want to access a bit in a byte further on.
  *
- * Note that this offset only works when added to uint32_t, as it
- * defines the number of 32 bit words to shift.
  */
-#define BBOFFSET(byte, bit)  (byte << 3 | bit)
+#define BBOFFSET(byte, bit)  (byte << 5 | bit << 2)
 
 void
 sk6812_render()
 {
     uint8_t inactive_buffer = (active_buffer ^ 1);
-    uint32_t *out = BBADDR(&spi[inactive_buffer][0]);
-    uint32_t *in = BBADDR(&frame[0]);
+    uint8_t *out = BBADDR(&spi[inactive_buffer][0]);
+    uint8_t *in = BBADDR(&frame[0]);
     uint8_t i, j;
 
     /*
@@ -167,14 +165,14 @@ sk6812_render()
 
     for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
         for (j = 0; j < sizeof(rgbpixel_t); j++) {
-            MMIO32(out + BBOFFSET(2, 1)) = MMIO32(in + BBOFFSET(0, 0));
-            MMIO32(out + BBOFFSET(2, 4)) = MMIO32(in + BBOFFSET(0, 1));
-            MMIO32(out + BBOFFSET(2, 7)) = MMIO32(in + BBOFFSET(0, 2));
-            MMIO32(out + BBOFFSET(1, 2)) = MMIO32(in + BBOFFSET(0, 3));
-            MMIO32(out + BBOFFSET(1, 5)) = MMIO32(in + BBOFFSET(0, 4));
-            MMIO32(out + BBOFFSET(0, 0)) = MMIO32(in + BBOFFSET(0, 5));
-            MMIO32(out + BBOFFSET(0, 3)) = MMIO32(in + BBOFFSET(0, 6));
-            MMIO32(out + BBOFFSET(0 ,6)) = MMIO32(in + BBOFFSET(0, 7));
+            MMIO8(out + BBOFFSET(2, 1)) = MMIO8(in + BBOFFSET(0, 0));
+            MMIO8(out + BBOFFSET(2, 4)) = MMIO8(in + BBOFFSET(0, 1));
+            MMIO8(out + BBOFFSET(2, 7)) = MMIO8(in + BBOFFSET(0, 2));
+            MMIO8(out + BBOFFSET(1, 2)) = MMIO8(in + BBOFFSET(0, 3));
+            MMIO8(out + BBOFFSET(1, 5)) = MMIO8(in + BBOFFSET(0, 4));
+            MMIO8(out + BBOFFSET(0, 0)) = MMIO8(in + BBOFFSET(0, 5));
+            MMIO8(out + BBOFFSET(0, 3)) = MMIO8(in + BBOFFSET(0, 6));
+            MMIO8(out + BBOFFSET(0 ,6)) = MMIO8(in + BBOFFSET(0, 7));
 
             /* Jump to next color, 1 byte further for in, 3 for out  */
             in += BBOFFSET(1, 0);
