@@ -1,7 +1,7 @@
-5x5 aka Gojira!
-===============
+5x5x2 aka Orochi!
+=================
 
-This is my first custom keyboard, a 5x5 cherry mx matrix based on the STM32F1
+This is my second custom keyboard, a 5x5 cherry mx matrix based on the STM32F1
 with libopencm3. The project contains firmware, schematics and a board layout
 in kicad.
 
@@ -17,9 +17,9 @@ supports:
 - an automouse mode for fast-clicking
 - programmable macro keys via serial
 - storing current configuration in "userflash"
+- sk68xx backlight leds
 
-The board is programmed using a 6-pin TagConnect, that must be wired
-to a STM Discovery SWD/STLink programming port.
+The board is programmed using a 4-pin SWIO/SWCLK .1'' header.
 
 Building
 ========

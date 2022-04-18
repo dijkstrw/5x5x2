@@ -45,7 +45,7 @@ static bool enumeration_active;
 static void
 mcu_init(void)
 {
-    rcc_clock_setup_pll(&rcc_hse_configs[RCC_CLOCK_HSE16_72MHZ]);
+    rcc_clock_setup_pll(&rcc_hse_configs[RCC_CLOCK_HSE8_72MHZ]);
 }
 
 /*
@@ -74,6 +74,7 @@ int
 main(void)
 {
     uint32_t enumeration_timer;
+    uint32_t j = 0;
 
     mcu_init();
 
@@ -85,6 +86,9 @@ main(void)
     led_init();
     matrix_init();
     macro_init();
+
+    rgbpixel_init();
+
     usb_init();
     flash_read_config();
 
@@ -93,6 +97,11 @@ main(void)
     enumeration_active = true;
 
     while (1) {
+        for (uint8_t i = 0; i < 25; i++) {
+            rgbpixel_set((j + i) % 25, 0, 0, i );
+        }
+        rgbpixel_render();
+
         if (enumeration_active) {
             /*
              * Note that this is the start state, but renewing

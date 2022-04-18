@@ -26,12 +26,12 @@
  */
 
 /*
- * Drive a string of sk6812 leds using spi
+ * Drive a string of rgbpixels (sk68xx, sk98xx, ws28xx) leds using spi
  */
 
 /*
  *
- * SK6812 need a string of "bits" clocked out every 1.25us ± 600ns
+ * sk68xx need a string of "bits" clocked out every 1.25us ± 600ns
  * - a 0 is signalled as "▇▁▁"
  * - a 1 is signalled as "▇▇▁"
  * - each sk6812 needs 8 of these words for R, G, B
@@ -45,8 +45,8 @@
  * - Data transmission time is 1.25µs ± 600ns = [  650ns,  1.85µs]
  * - Divide by 3 to get our per spi bit rate =  [  217ns,   617ns]
  * - To Hz                                   =  [4.61Mhz, 1.62Mhz]
- * - So divisor must be 16 or 32
- *
+ * - SPI CLK divisor must be 32
+ * - then one spi bit takes 1/2.25MHz = 444ns, and 3 take = 1.33µs
  */
 
 #include <limits.h>
@@ -54,34 +54,18 @@
 #include <string.h>
 
 #include <libopencm3/cm3/common.h>
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/stm32/dma.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
 
 #include "config.h"
-#include "sk6812.h"
+#include "rgbpixel.h"
 
-#define RESET_PULSE_US        80
-
-void
-sk6812_init()
-{
-    rcc_periph_clock_enable(SPI_RCC);
-    rcc_periph_clock_enable(SPI_GPIO_RCC);
-    gpio_set_mode(SPI_GPIO,
-                  GPIO_MODE_OUTPUT_10_MHZ,
-                  GPIO_CNF_OUTPUT_PUSHPULL,
-                  SPI_BV);
-
-    spi_reset(SPI_IF);
-    spi_init_master(SPI_IF, SPI_CR1_BAUDRATE_FPCLK_DIV_32,
-                    SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-                    SPI_CR1_CPHA_CLK_TRANSITION_1,
-                    SPI_CR1_DFF_8BIT,
-                    SPI_CR1_MSBFIRST);
-    spi_enable_software_slave_management(SPI_IF);
-    spi_set_nss_high(SPI_IF);
-}
+#define RESET_PULSE_NS        80000
+#define RESET_SPI_RATE_NS       444
+#define RESET_SPI_COUNT       (RESET_PULSE_NS / RESET_SPI_RATE_NS)
 
 typedef struct {
     uint8_t g;
@@ -95,12 +79,19 @@ typedef struct {
     uint8_t b[3];
 } __attribute__ ((packed)) spipixel_t;
 
-static rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
-static uint8_t active_buffer = 0;
-static spipixel_t spi[2][BACKLIGHT_LEDS_NUM];
+typedef enum {
+    TX_RESET_PULSE = 0,
+    TX_PIXEL_ARRAY,
+} spistatus_t;
 
-void
-sk6812_reset()
+static rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
+static spipixel_t spi[2][BACKLIGHT_LEDS_NUM];
+static volatile uint8_t active_buffer = 0;
+static volatile spistatus_t status = TX_RESET_PULSE;
+static uint32_t resetdata = 0;
+
+static void
+rgbpixel_reset()
 {
     uint8_t i, j;
 
@@ -120,12 +111,107 @@ sk6812_reset()
     }
 }
 
+static void
+rgbpixel_send_pixel_array()
+{
+    dma_channel_reset(DMA_IF, DMA_CHANNEL);
+
+    dma_set_peripheral_address(DMA_IF, DMA_CHANNEL, (uint32_t)&SPI_DATA);
+    dma_set_memory_address(DMA_IF, DMA_CHANNEL, (uint32_t)&spi[active_buffer][0]);
+    dma_set_number_of_data(DMA_IF, DMA_CHANNEL, sizeof(spi[0]));
+    dma_set_read_from_memory(DMA_IF, DMA_CHANNEL);
+    dma_enable_memory_increment_mode(DMA_IF, DMA_CHANNEL);
+    dma_set_peripheral_size(DMA_IF, DMA_CHANNEL, DMA_CCR_PSIZE_8BIT);
+    dma_set_memory_size(DMA_IF, DMA_CHANNEL, DMA_CCR_MSIZE_8BIT);
+    dma_set_priority(DMA_IF, DMA_CHANNEL, DMA_CCR_PL_LOW);
+
+    dma_enable_transfer_complete_interrupt(DMA_IF, DMA_CHANNEL);
+    dma_enable_channel(DMA_IF, DMA_CHANNEL);
+
+    spi_enable(SPI_IF);
+    spi_enable_tx_dma(SPI_IF);
+}
+
+static void
+rgbpixel_send_reset_pulse()
+{
+    dma_channel_reset(DMA_IF, DMA_CHANNEL);
+
+    dma_set_peripheral_address(DMA_IF, DMA_CHANNEL, (uint32_t)&SPI_DATA);
+    dma_set_memory_address(DMA_IF, DMA_CHANNEL, (uint32_t)&resetdata);
+    dma_set_number_of_data(DMA_IF, DMA_CHANNEL, RESET_SPI_COUNT);
+    dma_set_read_from_memory(DMA_IF, DMA_CHANNEL);
+    dma_set_peripheral_size(DMA_IF, DMA_CHANNEL, DMA_CCR_PSIZE_8BIT);
+    dma_set_memory_size(DMA_IF, DMA_CHANNEL, DMA_CCR_MSIZE_8BIT);
+    dma_set_priority(DMA_IF, DMA_CHANNEL, DMA_CCR_PL_LOW);
+
+    dma_enable_transfer_complete_interrupt(DMA_IF, DMA_CHANNEL);
+    dma_enable_channel(DMA_IF, DMA_CHANNEL);
+
+    spi_enable(SPI_IF);
+    spi_enable_tx_dma(SPI_IF);
+}
+
+void
+rgbpixel_init()
+{
+    rcc_periph_clock_enable(SPI_RCC);
+    rcc_periph_clock_enable(SPI_GPIO_RCC);
+    rcc_periph_clock_enable(DMA_RCC);
+    rcc_periph_clock_enable(RCC_AFIO);
+
+    /* Setup SPI */
+    gpio_set_mode(SPI_GPIO,
+                  GPIO_MODE_OUTPUT_50_MHZ,
+                  GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
+                  SPI_BV);
+
+    spi_reset(SPI_IF);
+    spi_init_master(SPI_IF, SPI_CR1_BAUDRATE_FPCLK_DIV_32,
+                    SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+                    SPI_CR1_CPHA_CLK_TRANSITION_1,
+                    SPI_CR1_DFF_8BIT,
+                    SPI_CR1_MSBFIRST);
+    spi_enable_software_slave_management(SPI_IF);
+    spi_set_nss_high(SPI_IF);
+
+    /* Setup DMA */
+    nvic_set_priority(DMA_IRQ, 10);
+    nvic_enable_irq(DMA_IRQ);
+
+    /* Start sending data */
+    rgbpixel_reset();
+    rgbpixel_send_reset_pulse();
+}
+
+void
+DMA_ISR_FUNCTION()
+{
+    spi_disable_tx_dma(SPI_IF);
+
+        /* Wait to transmit last data */
+    while (!(SPI_SR(SPI_IF) & SPI_SR_TXE));
+    while ((SPI_SR(SPI_IF) & SPI_SR_BSY));
+
+    spi_disable(SPI_IF);
+
+    dma_disable_transfer_complete_interrupt(DMA_IF, DMA_CHANNEL);
+    dma_disable_channel(DMA_IF, DMA_CHANNEL);
+
+    if (status == TX_RESET_PULSE) {
+        status = TX_PIXEL_ARRAY;
+        rgbpixel_send_pixel_array();
+    } else {
+        status = TX_RESET_PULSE;
+        rgbpixel_send_reset_pulse();
+    }
+}
+
 /*
  * ARM Cortex M3/M4 can bitband; map individual bits of an byte into a
  * separate address range, where the bits are blown up to words to
  * make them easily accessible.
  */
-
 #define SRAM_BASE_BITBAND	(0x22000000U)
 
 /*
@@ -143,12 +229,11 @@ sk6812_reset()
  *
  * Calculate the offset to add to a start bitbanded address when we
  * want to access a bit in a byte further on.
- *
  */
 #define BBOFFSET(byte, bit)  (byte << 5 | bit << 2)
 
 void
-sk6812_render()
+rgbpixel_render()
 {
     uint8_t inactive_buffer = (active_buffer ^ 1);
     uint8_t *out = BBADDR(&spi[inactive_buffer][0]);
@@ -179,10 +264,13 @@ sk6812_render()
             out += BBOFFSET(3, 0);
         }
     }
+
+    /* Ensure SPI takes rendered buffer for next transmission */
+    active_buffer = inactive_buffer;
 }
 
 void
-sk6812_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b)
+rgbpixel_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b)
 {
     if (n < BACKLIGHT_LEDS_NUM) {
         frame[n].g = g;

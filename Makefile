@@ -1,7 +1,7 @@
-BINARY = 5x5
-OBJS = 5x5.o automouse.o clock.o command.o debug.o elog.o extrakey.o	\
+BINARY = 5x5x2
+OBJS = 5x5x2.o automouse.o clock.o command.o debug.o elog.o extrakey.o	\
        flash.o keyboard.o keymap.o led.o macro.o matrix.o mouse.o	\
-       map_ascii.o ring.o serial.o sk6812.o usb.o
+       map_ascii.o rgbpixel.o ring.o serial.o usb.o
 
 GOJIRA_VERSION   = $(shell git describe --tags --always)
 
@@ -15,6 +15,8 @@ OPENCM3_DIR      = libopencm3
 STLINK_PORT      = 4242
 OPENOCD_PORT     = 3333
 BMP_PORT         = /dev/ttyACM0
+
+GDB              = arm-none-eabi-gdb-py
 
 include $(OPENCM3_DIR)/mk/genlink-config.mk
 LDSCRIPT         = stm32f103c8t6.ld

@@ -104,6 +104,13 @@
 #define SPI_GPIO              GPIOA
 #define SPI_BV                GPIO7
 #define SPI_IF                SPI1
+#define SPI_DATA              SPI1_DR
+
+#define DMA_RCC               RCC_DMA1
+#define DMA_IF                DMA1
+#define DMA_CHANNEL           DMA_CHANNEL3
+#define DMA_IRQ               NVIC_DMA1_CHANNEL3_IRQ
+#define DMA_ISR_FUNCTION      dma1_channel3_isr
 
 #define BACKLIGHT_LEDS_NUM    25
 

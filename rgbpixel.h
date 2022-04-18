@@ -25,14 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SK6812_H
-#define _SK6812_H
+#ifndef _RGBPIXEL_H
+#define _RGBPIXEL_H
 
 #include <stdint.h>
 
-void sk6812_init(void);
-void sk6812_reset(void);
-void sk6812_render(void);
-void sk6812_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b);
+void rgbpixel_init(void);
+void rgbpixel_render(void);
+void rgbpixel_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b);
 
 #endif
