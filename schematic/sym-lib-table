@@ -1,0 +1,9 @@
+(sym_lib_table
+  (lib (name "Device")(type "KiCad")(uri "${KICAD6_SYMBOL_DIR}/Device.kicad_sym")(options "")(descr ""))
+  (lib (name "Diode")(type "KiCad")(uri "${KICAD6_SYMBOL_DIR}/Diode.kicad_sym")(options "")(descr ""))
+  (lib (name "USB")(type "KiCad")(uri "${KICAD6_SYMBOL_DIR}/Interface_USB.kicad_sym")(options "")(descr ""))
+  (lib (name "SK68xx")(type "KiCad")(uri "/home/dijkstra/project/5x5x2/schematic/symbols/SK68xx.kicad_sym")(options "")(descr ""))
+  (lib (name "Connector")(type "KiCad")(uri "${KICAD6_SYMBOL_DIR}/Connector.kicad_sym")(options "")(descr ""))
+  (lib (name "STM32F103")(type "KiCad")(uri "${KIPRJMOD}/symbols/STM32F103.kicad_sym")(options "")(descr ""))
+  (lib (name "stm32f103c8")(type "KiCad")(uri "${KIPRJMOD}/symbols/stm32f103c8.kicad_sym")(options "")(descr ""))
+)
