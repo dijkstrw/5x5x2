@@ -89,9 +89,13 @@ configuration. Commands available are:
 
     N - set keyboard mode to nkro.
 
-    R - read configuration from flash
+    R - redefine the rotary command, takes a hexadecimal argument of
+        the form <layer><direction><type><arg1><arg2><arg3>, with each
+        argument being 2 digits long.
 
-    W - write configuration to flash
+    L - load configuration from flash
+
+    S - save configuration to flash
 
     Z - clear the configration flash, revert to "factory" keymap at
         next powerup.

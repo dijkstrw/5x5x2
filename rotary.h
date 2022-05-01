@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2022 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _COMMAND_H
-#define _COMMAND_H
+#ifndef _ROTARY_H
+#define _ROTARY_H
 
-#include "ring.h"
+#include <stdint.h>
+#include "keymap.h"
 
-#define CMD_FLASH_CLEAR   'Z'
-#define CMD_FLASH_LOAD    'L'
-#define CMD_FLASH_SAVE    'S'
-#define CMD_IDENTIFY      'i'
-#define CMD_KEYMAP_DUMP   'd'
-#define CMD_KEYMAP_SET    'K'
-#define CMD_MACRO_CLEAR   'm'
-#define CMD_MACRO_SET     'M'
-#define CMD_NKRO_CLEAR    'n'
-#define CMD_NKRO_SET      'N'
-#define CMD_ROTARY_SET    'R'
+#define ROTARY_DIRECTIONS               2
+enum {
+    ROTARY_BACKWARD = 0,
+    ROTARY_FORWARD = 1,
+    ROTARY_NONE = 2
+};
 
-void command_process(struct ring *input_ring);
+extern event_t rotary[][ROTARY_DIRECTIONS];
+extern volatile uint16_t rotary_value;
 
-#endif /* _COMMAND_H */
+void rotary_init(void);
+void rotary_process(void);
+void rotary_set(uint8_t layer, uint8_t direction, event_t *event);
+
+#endif

@@ -40,10 +40,11 @@
 #include <libopencm3/stm32/rcc.h>
 
 #include "config.h"
-#include "keymap.h"
-#include "keyboard.h"
-#include "macro.h"
 #include "elog.h"
+#include "keyboard.h"
+#include "keymap.h"
+#include "macro.h"
+#include "rotary.h"
 
 #if MACRO_MAXKEYS % 4
 /* flash reads and writes are in 4 byte increments. While other values
@@ -58,6 +59,7 @@ typedef struct {
 
 typedef struct {
     event_t keymap[LAYERS_NUM][ROWS_NUM][COLS_NUM];
+    event_t rotary[LAYERS_NUM][ROTARY_DIRECTIONS];
     event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
     uint8_t macro_len[MACRO_MAXKEYS];
     uint32_t layer;
@@ -145,6 +147,7 @@ flash_read_config(void)
 
     cm_disable_interrupts();
     memcpy(keymap, flash.data.keymap, sizeof(flash.data.keymap));
+    memcpy(rotary, flash.data.rotary, sizeof(flash.data.rotary));
     memcpy(macro_buffer, flash.data.macro_buffer, sizeof(flash.data.macro_buffer));
     memcpy(macro_len, flash.data.macro_len, sizeof(flash.data.macro_len));
     layer = flash.data.layer;
@@ -196,6 +199,11 @@ flash_write_config(void)
     if (! flash_write_block(&flash.data.keymap,
                             keymap,
                             sizeof(flash.data.keymap))) {
+        return 0;
+    }
+    if (! flash_write_block(&flash.data.rotary,
+                            rotary,
+                            sizeof(flash.data.rotary))) {
         return 0;
     }
     if (! flash_write_block(&flash.data.macro_buffer,

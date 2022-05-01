@@ -36,13 +36,10 @@
 #include "automouse.h"
 #include "config.h"
 #include "elog.h"
-#include "extrakey.h"
-#include "keyboard.h"
 #include "keymap.h"
 #include "led.h"
 #include "macro.h"
 #include "map_ascii.h"
-#include "mouse.h"
 
 event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
 uint8_t macro_len[MACRO_MAXKEYS];
@@ -110,61 +107,6 @@ macro_event(event_t *event, bool pressed)
     }
 }
 
-static uint8_t
-send_if_idle(event_t *event, uint8_t press)
-{
-    switch (event->type) {
-        case KMT_KEY:
-            if (usb_ep_keyboard_idle && usb_ep_nkro_idle) {
-                keyboard_event(event, press);
-            } else {
-                return 0;
-            }
-            break;
-
-        case KMT_MOUSE:
-            if (usb_ep_mouse_idle) {
-                mouse_event(event, press);
-            } else {
-                return 0;
-            }
-            break;
-
-        case KMT_AUTOMOUSE:
-            if (usb_ep_mouse_idle) {
-                automouse_event(event, press);
-            } else {
-                return 0;
-            }
-            break;
-
-        case KMT_WHEEL:
-            if (usb_ep_mouse_idle) {
-                wheel_event(event, press);
-            } else {
-                return 0;
-            }
-            break;
-
-        case KMT_CONSUMER:
-            if (usb_ep_extrakey_idle) {
-                extrakey_consumer_event(event, press);
-            } else {
-                return 0;
-            }
-            break;
-
-        case KMT_SYSTEM:
-            if (usb_ep_extrakey_idle) {
-                extrakey_system_event(event, 1);
-            } else {
-                return 0;
-            }
-            break;
-    }
-    return 1;
-}
-
 void
 macro_run()
 {
@@ -175,13 +117,13 @@ macro_run()
         event = &macro_buffer[macro_key][macro_position];
         switch (macro_operation) {
             case MACRO_INIT:
-                if (send_if_idle(event, 1)) {
+                if (send_event_if_idle(event, 1)) {
                     macro_operation = MACRO_PRESSED;
                 }
                 break;
 
             case MACRO_PRESSED:
-                if (send_if_idle(event, 0)) {
+                if (send_event_if_idle(event, 0)) {
                     macro_operation = MACRO_UNPRESSED;
                 }
                 break;

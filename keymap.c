@@ -147,3 +147,58 @@ keymap_event(uint16_t row, uint16_t col, bool pressed)
             break;
     }
 }
+
+uint8_t
+send_event_if_idle(event_t *event, uint8_t press)
+{
+    switch (event->type) {
+        case KMT_KEY:
+            if (usb_ep_keyboard_idle && usb_ep_nkro_idle) {
+                keyboard_event(event, press);
+            } else {
+                return 0;
+            }
+            break;
+
+        case KMT_MOUSE:
+            if (usb_ep_mouse_idle) {
+                mouse_event(event, press);
+            } else {
+                return 0;
+            }
+            break;
+
+        case KMT_AUTOMOUSE:
+            if (usb_ep_mouse_idle) {
+                automouse_event(event, press);
+            } else {
+                return 0;
+            }
+            break;
+
+        case KMT_WHEEL:
+            if (usb_ep_mouse_idle) {
+                wheel_event(event, press);
+            } else {
+                return 0;
+            }
+            break;
+
+        case KMT_CONSUMER:
+            if (usb_ep_extrakey_idle) {
+                extrakey_consumer_event(event, press);
+            } else {
+                return 0;
+            }
+            break;
+
+        case KMT_SYSTEM:
+            if (usb_ep_extrakey_idle) {
+                extrakey_system_event(event, 1);
+            } else {
+                return 0;
+            }
+            break;
+    }
+    return 1;
+}

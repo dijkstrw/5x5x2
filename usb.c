@@ -648,8 +648,8 @@ const struct usb_config_descriptor config = {
 
 const char *usb_strings[] = {
     "dijkstra.xyz",
-    "Gojira",
-    GOJIRA_VERSION,
+    "Orochi",
+    OROCHI_VERSION,
     "Boot keyboard",
     "Boot mouse",
     "Control keyboard",

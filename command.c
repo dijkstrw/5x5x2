@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2021-2022 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,14 @@
 #include "command.h"
 #include "config.h"
 #include "elog.h"
+#include "flash.h"
 #include "keyboard.h"
 #include "keymap.h"
 #include "macro.h"
 #include "ring.h"
+#include "rotary.h"
 #include "serial.h"
 #include "usb.h"
-#include "flash.h"
 
 static uint8_t flash_write_active = 0;
 
@@ -126,6 +127,23 @@ command_set_macro(struct ring *input_ring)
     elog("macro not closed of with eol");
 }
 
+static
+command_set_rotary(struct ring *input_ring)
+{
+    uint8_t alayer, adirection;
+    event_t event;
+
+    alayer = read_hex_8(input_ring);
+    adirection = read_hex_8(input_ring);
+
+    event.type = read_hex_8(input_ring);
+    event.args.num1 = read_hex_8(input_ring);
+    event.args.num2 = read_hex_8(input_ring);
+    event.args.num3 = read_hex_8(input_ring);
+
+    rotary_set(alayer, adirection, &event);
+}
+
 void
 command_process(struct ring *input_ring)
 {
@@ -138,11 +156,11 @@ command_process(struct ring *input_ring)
                 flash_clear_config();
                 break;
 
-            case CMD_FLASH_READ:
+            case CMD_FLASH_LOAD:
                 flash_read_config();
                 break;
 
-            case CMD_FLASH_WRITE:
+            case CMD_FLASH_SAVE:
                 flash_write_config();
                 break;
 
@@ -176,16 +194,21 @@ command_process(struct ring *input_ring)
                 printfnl("nkro %d", nkro_active);
                 break;
 
+            case CMD_ROTARY_SET:
+                command_set_rotary(input_ring);
+                break;
+
             case '?':
                 printfnl("commands:");
                 printfnl("i                - identify");
-                printfnl("k                - dump keymap");
+                printfnl("d                - dump keymap");
                 printfnl("Kllrrcctta1a2a3  - set keymap layer, row, column, type, arg1-3");
                 printfnl("m                - clear all macro keys");
                 printfnl("Mnnstring        - set macro nn with string");
                 printfnl("n                - clear nkro");
                 printfnl("N                - set nkro");
-                printfnl("R                - read configuration from flash");
+                printfnl("R                - set rotary layer, direction, type, arg1-3");
+                printfnl("L                - load configuration from flash");
                 printfnl("W                - write configuration to flash");
                 printfnl("Z                - erase configuration flash");
                 break;

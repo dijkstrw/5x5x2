@@ -37,6 +37,7 @@
 #include "macro.h"
 #include "matrix.h"
 #include "mouse.h"
+#include "rotary.h"
 #include "serial.h"
 #include "usb.h"
 
@@ -86,6 +87,7 @@ main(void)
     led_init();
     matrix_init();
     macro_init();
+    rotary_init();
 
     rgbpixel_init();
 
@@ -98,8 +100,9 @@ main(void)
 
     while (1) {
         for (uint8_t i = 0; i < 25; i++) {
-            rgbpixel_set((j + i) % 25, 0, 0, i );
+            rgbpixel_set((j + i) % 25, j, 128 + j, 255 - j );
         }
+        j++;
         rgbpixel_render();
 
         if (enumeration_active) {
@@ -138,6 +141,7 @@ main(void)
 
         if (keyboard_active) {
             matrix_process();
+            rotary_process();
         }
 
         if (automouse_active) {

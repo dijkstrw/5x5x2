@@ -1,13 +1,13 @@
 BINARY = 5x5x2
 OBJS = 5x5x2.o automouse.o clock.o command.o debug.o elog.o extrakey.o	\
        flash.o keyboard.o keymap.o led.o macro.o matrix.o mouse.o	\
-       map_ascii.o rgbpixel.o ring.o serial.o usb.o
+       map_ascii.o rgbpixel.o ring.o rotary.o serial.o usb.o
 
-GOJIRA_VERSION   = $(shell git describe --tags --always)
+OROCHI_VERSION   = $(shell git describe --tags --always)
 
 DEVICE           = stm32f103c8t6
 CPPFLAGS        += -MD
-CFLAGS           = -DGOJIRA_VERSION='"$(GOJIRA_VERSION)"' -g -mfix-cortex-m3-ldrd
+CFLAGS           = -DOROCHI_VERSION='"$(OROCHI_VERSION)"' -g -mfix-cortex-m3-ldrd
 LDFLAGS         += -static -nostartfiles
 LDLIBS          += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 OPENCM3_DIR      = libopencm3

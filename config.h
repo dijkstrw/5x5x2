@@ -114,4 +114,15 @@
 
 #define BACKLIGHT_LEDS_NUM    25
 
+/*
+ * Rotary encoder
+ */
+#define ROT_GPIO_RCC          RCC_GPIOA
+#define ROT_GPIO              GPIOA
+#define ROT_TIM_RCC           RCC_TIM1
+#define ROT_TIM               TIM1
+#define ROT_BV                (GPIO8 | GPIO9)
+#define ROT_PERIOD            65535
+
+
 #endif /* _CONFIG_H */
