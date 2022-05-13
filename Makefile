@@ -1,7 +1,7 @@
 BINARY = 5x5x2
 OBJS = 5x5x2.o automouse.o clock.o command.o debug.o elog.o extrakey.o	\
        flash.o keyboard.o keymap.o led.o macro.o matrix.o mouse.o	\
-       map_ascii.o rgbpixel.o ring.o rotary.o serial.o usb.o
+       map_ascii.o rgbpixel.o rgbmap.o ring.o rotary.o serial.o usb.o
 
 OROCHI_VERSION   = $(shell git describe --tags --always)
 

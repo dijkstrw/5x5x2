@@ -31,12 +31,12 @@
 
 /*
  *
- * sk68xx need a string of "bits" clocked out every 1.25us ± 600ns
+ * sk68xx need a string of "bits" clocked out every 1.25µs ± 600ns
  * - a 0 is signalled as "▇▁▁"
  * - a 1 is signalled as "▇▇▁"
  * - each sk6812 needs 8 of these words for R, G, B
  * - a reset pulse clears the light we are addressing, and needs to be
- *   longer than 80us
+ *   longer than 80µs
  *
  * Looking for SPI divisor; main clock is 72MHz. If we divide the
  * led-word into three bits we need 3 times the data transmission speed
@@ -68,12 +68,6 @@
 #define RESET_SPI_COUNT       (RESET_PULSE_NS / RESET_SPI_RATE_NS)
 
 typedef struct {
-    uint8_t g;
-    uint8_t r;
-    uint8_t b;
-} __attribute__ ((packed)) rgbpixel_t;
-
-typedef struct {
     uint8_t g[3];
     uint8_t r[3];
     uint8_t b[3];
@@ -84,7 +78,7 @@ typedef enum {
     TX_PIXEL_ARRAY,
 } spistatus_t;
 
-static rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
+rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
 static spipixel_t spi[2][BACKLIGHT_LEDS_NUM];
 static volatile uint8_t active_buffer = 0;
 static volatile spistatus_t status = TX_RESET_PULSE;
@@ -245,7 +239,7 @@ rgbpixel_render()
      * framebuffer into the inactive spi buffer.
      *
      * framebuffer[0].g = bits 76543210
-     * spibuffer[0].g = bits x7xx6xx5 xx4xx3xx 2xx1xx0x
+     * spibuffer[0].g = bits ₁7₀₁6₀₁5 ₀₁4₀₁3₀₁ 2₀₁1₀₁0₀
      */
 
     for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {

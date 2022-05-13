@@ -75,6 +75,7 @@ int
 main(void)
 {
     uint32_t enumeration_timer;
+    uint32_t led_timer = 0;
     uint32_t j = 0;
 
     mcu_init();
@@ -95,15 +96,14 @@ main(void)
     flash_read_config();
 
     elog("initialized");
-
+    rainbow_init();
     enumeration_active = true;
 
     while (1) {
-        for (uint8_t i = 0; i < 25; i++) {
-            rgbpixel_set((j + i) % 25, j, 128 + j, 255 - j );
+        if (timer_passed(led_timer)) {
+            rainbow_advance();
+            led_timer = timer_set(1);
         }
-        j++;
-        rgbpixel_render();
 
         if (enumeration_active) {
             /*

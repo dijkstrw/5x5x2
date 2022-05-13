@@ -30,6 +30,14 @@
 
 #include <stdint.h>
 
+typedef struct {
+    uint8_t g;
+    uint8_t r;
+    uint8_t b;
+} __attribute__ ((packed)) rgbpixel_t;
+
+extern rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
+
 void rgbpixel_init(void);
 void rgbpixel_render(void);
 void rgbpixel_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b);
