@@ -8,4 +8,6 @@
   (lib (name "Crystal")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/Crystal.pretty")(options "")(descr ""))
   (lib (name "LED_SMD")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/LED_SMD.pretty")(options "")(descr ""))
   (lib (name "footprints")(type "KiCad")(uri "${KIPRJMOD}/footprints")(options "")(descr ""))
+  (lib (name "keyswitch")(type "KiCad")(uri "${KICAD6_3RD_PARTY}/footprints/com_github_perigoso_keyswitch-kicad-library/Switch_Keyboard_Hotswap_Kailh.pretty")(options "")(descr ""))
+  (lib (name "Connector_PinSocket_1.27mm")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/Connector_PinSocket_1.27mm.pretty")(options "")(descr ""))
 )

@@ -9,7 +9,10 @@
     (property "Footprint" "" (id 2) (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "" (id 3) (at 0 0 0)
+    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/1912111437_ALPSALPINE-EC11E183440C_C370986.pdf" (id 3) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C370986" (id 4) (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (symbol "ALPS_EC11_0_1"
