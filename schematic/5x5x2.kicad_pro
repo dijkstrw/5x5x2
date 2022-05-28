@@ -120,7 +120,7 @@
       },
       "track_widths": [
         0.0,
-        0.2032
+        0.254
       ],
       "via_dimensions": [
         {
@@ -379,7 +379,7 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "",
+      "netlist": "5x5x2.net",
       "specctra_dsn": "",
       "step": "",
       "vrml": ""

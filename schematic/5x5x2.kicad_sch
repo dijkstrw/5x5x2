@@ -5075,7 +5075,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 355.6 61.595 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 025174a1-c1b3-43da-9711-d3a3a7ce445e)
-    (property "Reference" "LED21" (id 0) (at 362.585 54.61 0)
+    (property "Reference" "LED25" (id 0) (at 362.585 54.61 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 353.695 69.85 0)
@@ -5187,7 +5187,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 269.24 104.775 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 0e23ae1d-611b-4654-9b36-886c92306d44)
-    (property "Reference" "LED45" (id 0) (at 276.225 97.79 0)
+    (property "Reference" "LED41" (id 0) (at 276.225 97.79 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 266.7 113.03 0)
@@ -6043,7 +6043,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 290.83 61.595 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 3abfbcd0-9099-438c-a966-1761d5740cb1)
-    (property "Reference" "LED24" (id 0) (at 298.45 54.61 0)
+    (property "Reference" "LED22" (id 0) (at 298.45 54.61 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 288.29 69.85 0)
@@ -6551,7 +6551,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 290.83 104.775 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 72abcb82-0f94-41d1-ace4-f1ac54bc9c8d)
-    (property "Reference" "LED44" (id 0) (at 297.815 97.79 0)
+    (property "Reference" "LED42" (id 0) (at 297.815 97.79 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 288.29 113.03 0)
@@ -7932,7 +7932,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 355.6 104.775 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid d96937f5-5821-40dc-9935-d17c504b3d87)
-    (property "Reference" "LED41" (id 0) (at 362.585 97.79 0)
+    (property "Reference" "LED45" (id 0) (at 362.585 97.79 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 353.06 113.03 0)
@@ -7989,7 +7989,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 334.01 61.595 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid dd1c2f7a-c2b3-4df2-93b2-04fe1591f702)
-    (property "Reference" "LED22" (id 0) (at 340.995 54.61 0)
+    (property "Reference" "LED24" (id 0) (at 340.995 54.61 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 332.74 69.85 0)
@@ -8357,7 +8357,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 334.01 104.775 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid f1adb53e-37ad-4a2f-81ba-8714ff14ec13)
-    (property "Reference" "LED42" (id 0) (at 340.995 97.79 0)
+    (property "Reference" "LED44" (id 0) (at 340.995 97.79 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 331.47 113.03 0)
@@ -8489,7 +8489,7 @@
   (symbol (lib_id "SK68xx:SK6812MINI-E") (at 269.24 61.595 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid f51d1fbb-e25c-4749-bba5-7561a1e13b31)
-    (property "Reference" "LED25" (id 0) (at 276.86 54.61 0)
+    (property "Reference" "LED21" (id 0) (at 276.86 54.61 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "SK6812MINI-E" (id 1) (at 266.7 69.85 0)
@@ -8980,19 +8980,19 @@
     (path "/8e4480fe-afdb-44f3-8363-6ea3a6786b18"
       (reference "LED15") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/025174a1-c1b3-43da-9711-d3a3a7ce445e"
+    (path "/f51d1fbb-e25c-4749-bba5-7561a1e13b31"
       (reference "LED21") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/dd1c2f7a-c2b3-4df2-93b2-04fe1591f702"
+    (path "/3abfbcd0-9099-438c-a966-1761d5740cb1"
       (reference "LED22") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
     (path "/ce8550b8-8116-414d-81c9-47e422bfb16b"
       (reference "LED23") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/3abfbcd0-9099-438c-a966-1761d5740cb1"
+    (path "/dd1c2f7a-c2b3-4df2-93b2-04fe1591f702"
       (reference "LED24") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/f51d1fbb-e25c-4749-bba5-7561a1e13b31"
+    (path "/025174a1-c1b3-43da-9711-d3a3a7ce445e"
       (reference "LED25") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
     (path "/1100e1dc-ca4d-4de7-8363-00275b0d5900"
@@ -9010,19 +9010,19 @@
     (path "/d1512b7c-786d-4249-89ad-e0bb106224e1"
       (reference "LED35") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/d96937f5-5821-40dc-9935-d17c504b3d87"
+    (path "/0e23ae1d-611b-4654-9b36-886c92306d44"
       (reference "LED41") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/f1adb53e-37ad-4a2f-81ba-8714ff14ec13"
+    (path "/72abcb82-0f94-41d1-ace4-f1ac54bc9c8d"
       (reference "LED42") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
     (path "/0d975df2-ce43-48cd-814a-af1c2f15ae39"
       (reference "LED43") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/72abcb82-0f94-41d1-ace4-f1ac54bc9c8d"
+    (path "/f1adb53e-37ad-4a2f-81ba-8714ff14ec13"
       (reference "LED44") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
-    (path "/0e23ae1d-611b-4654-9b36-886c92306d44"
+    (path "/d96937f5-5821-40dc-9935-d17c504b3d87"
       (reference "LED45") (unit 1) (value "SK6812MINI-E") (footprint "footprints:YS-SK6812MINI-E")
     )
     (path "/654bff4e-53b9-4a9b-ba96-9d019a91e3e9"
