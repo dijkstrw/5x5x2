@@ -12,4 +12,5 @@
   (lib (name "Connector_PinSocket_1.27mm")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/Connector_PinSocket_1.27mm.pretty")(options "")(descr ""))
   (lib (name "Connector")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/Connector.pretty")(options "")(descr ""))
   (lib (name "MountingHole")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/MountingHole.pretty")(options "")(descr ""))
+  (lib (name "Button_Switch_SMD")(type "KiCad")(uri "${KICAD6_FOOTPRINT_DIR}/Button_Switch_SMD.pretty")(options "")(descr ""))
 )
