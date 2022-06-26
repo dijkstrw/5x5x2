@@ -1,4 +1,4 @@
-2683931417228414
+2683936402520608
 Button_Switch_SMD
 Nidec_Copal_SH-7010A
 4-bit rotary coded switch, J-hook, https://www.nidec-copal-electronics.com/e/catalog/switch/sh-7000.pdf
@@ -10486,11 +10486,11 @@ LQFP-48_L7.0-W7.0-P0.50-LS9.0-BL
 48
 48
 footprints
-SK6812MINI_rev
+SK6812_mini
 
 
 0
-4
+13
 4
 footprints
 SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL

@@ -15,3 +15,6 @@ Other keyboard projects of interest:
   https://github.com/KarlK90/yaemk-split-kb
   
   GPLv3, used for inspiration only.
+
+- Stefan Hamminga: sk6812mini model that models the underside of the
+  package best.
