@@ -98,7 +98,7 @@ hsv2rgb(hsv_t *h, rgbpixel_t *p)
      * - one of the rgb colors is at h->v * (1 - h->s)
      * - one of the rgb colors is enroute up or down
      *
-     * Sextant one is our standard, and when in order sextants we
+     * Sextant one is our standard, and when in other sextants we
      * rearrange the pointers so that we can calculate like we were in
      * sextant one.
      */

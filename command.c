@@ -209,7 +209,7 @@ command_process(struct ring *input_ring)
                 printfnl("N                - set nkro");
                 printfnl("R                - set rotary layer, direction, type, arg1-3");
                 printfnl("L                - load configuration from flash");
-                printfnl("W                - write configuration to flash");
+                printfnl("S                - write configuration to flash");
                 printfnl("Z                - erase configuration flash");
                 break;
 
