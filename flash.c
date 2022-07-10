@@ -115,6 +115,10 @@ flash_erase()
     elog("erasing flash");
     flash_clear_status_flags();
     flash_unlock();
+
+    /* GD32F103 needs some additional time after unlock */
+    __asm__("nop"); __asm__("nop");
+
     for (i = 0; i < FLASH_PAGE_NUM; i++) {
         flash_erase_page((uint32_t)&flash.page.data[i]);
         status = flash_get_status_flags();
