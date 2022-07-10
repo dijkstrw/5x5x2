@@ -40,6 +40,8 @@
 #include "rotary.h"
 #include "serial.h"
 #include "usb.h"
+#include "rgbpixel.h"
+#include "rgbease.h"
 
 static bool enumeration_active;
 
@@ -96,13 +98,15 @@ main(void)
     flash_read_config();
 
     elog("initialized");
-    rainbow_init();
+    ease_init();
+    ease_set(0, 1, COLOR_PURPLE, F_EASEQUADIN);
+    ease_set(0, 2, COLOR_WHITE, F_RAINBOW);
     enumeration_active = true;
 
     while (1) {
         if (timer_passed(led_timer)) {
-            rainbow_advance();
-            led_timer = timer_set(1);
+            ease_advance();
+            led_timer = timer_set(3);
         }
 
         if (enumeration_active) {

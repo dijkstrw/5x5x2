@@ -1,56 +1,54 @@
+/*
+ * Copyright (c) 2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *    * Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
+ *    * Neither the name of the auhor nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software
+ *      without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+ * Map key/rows to rgbpixels & map between colorspaces.
+ */
 #include "elog.h"
 #include "config.h"
 #include "rgbmap.h"
 
 /* Map location of a rgb led to a key */
 
-uint8_t key2rgb[ROWS_NUM][COLS_NUM] =
+static uint8_t key2rgb[ROWS_NUM][COLS_NUM] =
 {
     {  0,  1,  2,  3,  4 },
-    {  5,  6,  7,  8,  9 },
+    {  9,  8,  7,  6,  5 },
     { 10, 11, 12, 13, 14 },
-    { 15, 16, 17, 18, 19 },
+    { 19, 18, 17, 16, 15 },
     { 20, 21, 22, 23, 24 }
 };
 
-/*
- * Light movements come in a number of forms:
- * - set the backlight to a particular color (can be per key, per layer)
- * - move from current color to a new color in a number of steps
- */
-
-typedef struct {
-    rgbpixel_t backlight;
-} a_background;
-
-typedef struct {
-    rgbpixel_t source;
-    rgbpixel_t destination;
-    uint8_t step;
-} a_ease;
-
-static hsv_t rainbow[BACKLIGHT_LEDS_NUM];
-
-void
-rainbow_init() {
-    uint8_t i;
-    for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
-        rainbow[i].h = 0;
-        rainbow[i].s = 0xff;
-        rainbow[i].v = 0xff;
-    }
-}
-
-void
-rainbow_advance() {
-    uint8_t i;
-    for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
-        rainbow[i].h += 3;
-        rainbow[i].h %= HUE_MAX;
-
-        hsv2rgb(&rainbow[i], &frame[i]);
-    }
-    rgbpixel_render();
+uint8_t
+key2led(uint8_t row, uint8_t column)
+{
+    row %= ROWS_NUM;
+    column %= COLS_NUM;
+    return key2rgb[row][column];
 }
 
 /* hsv2rgb using integer arithmetic

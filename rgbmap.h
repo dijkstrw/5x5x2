@@ -1,21 +1,55 @@
+/*
+ * Copyright (c) 2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *    * Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
+ *    * Neither the name of the auhor nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software
+ *      without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #ifndef _RGBMAP_H
 #define _RGBMAP_H
 
 #include "rgbpixel.h"
 
 typedef struct {
-    uint16_t h;
-    uint8_t s;
-    uint8_t v;
+    union {
+        struct {
+            uint16_t h;
+            uint8_t s;
+            uint8_t v;
+        };
+        uint32_t raw;
+    };
 } __attribute__ ((packed)) hsv_t;
+
+#define PACK_HSV(h, s, v)          ((uint32_t) (((v & 0xff) << 24) | ((s & 0xff) << 16) | (h << 3)))
+#define COLOR_PURPLE               PACK_HSV(300, 0xff, 0x7f)
+#define COLOR_WHITE                PACK_HSV(0, 0xff, 0xff)
 
 #define HUE_SEXTANT                0x100
 #define SEXTANT_MAX                6
 #define HUE_MAX                    ((SEXTANT_MAX * HUE_SEXTANT) - 1)
 
-/* Temporary effects to troubleshoot code */
-void rainbow_init(void);
-void rainbow_advance(void);
+uint8_t key2led(uint8_t row, uint8_t column);
 void hsv2rgb(hsv_t *h, rgbpixel_t *p);
 
 #endif
