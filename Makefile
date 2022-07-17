@@ -17,11 +17,11 @@ STLINK_PORT      = 4242
 BMP_HOST         = blackmagic.lan
 BMP_PORT         = 2022
 
-GDB              = arm-none-eabi-gdb-py
-
 include $(OPENCM3_DIR)/mk/genlink-config.mk
 LDSCRIPT         = stm32f103c8t6.ld
 include $(OPENCM3_DIR)/mk/gcc-config.mk
+
+GDB              = arm-none-eabi-gdb-py
 
 all: $(BINARY).elf
 
@@ -39,7 +39,7 @@ flash_stlink: $(BINARY).bin
 	st-flash write $(BINARY).bin 0x8000000
 
 .gdb_config_bmp:
-	echo > .gdb_config "file $(BINARY).elf\ntarget extended-remote $(BMP_HOST):$(BMP_PORT)\nmonitor version\nmonitor swdp_scan\nattach 1\nbreak main\nset mem inaccessible-by-default off\n"
+	echo > .gdb_config "file $(BINARY).elf\ntarget extended-remote $(BMP_HOST):$(BMP_PORT)\nmonitor version\nmonitor swdp_scan\nattach 1\nbreak main\nset mem inaccessible-by-default off\nsource gdb-regview/gdb-regview.py\nregview load gdb-regview/defs/STM32F10X_CL.xml\n"
 
 debug: .gdb_config_bmp $(BINARY).elf
 	$(GDB) --command=.gdb_config

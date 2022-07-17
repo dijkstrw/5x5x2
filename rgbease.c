@@ -61,16 +61,33 @@ ease_init() {
 }
 
 void
-ease_set(uint8_t row, uint8_t column, phsv_t target, uint8_t f)
+ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f)
 {
     uint8_t id = key2led(row, column);
+
+    ease_set_direct(id, target, f, 0);
+}
+
+void
+ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step)
+{
     rgbease *led = &leds[id];
 
-    led->target.raw = target;
-
+    led->target = target;
     led->f = f;
+    led->step = step;
+}
 
-    led->step = 0;
+void
+ease_rainbow(void)
+{
+    uint8_t i;
+    hsv_t color = HSV_WHITE;
+
+    for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
+        ease_set_direct(i, color, F_RAINBOW, 0);
+        color.h += (HUE_MAX / BACKLIGHT_LEDS_NUM);
+    }
 }
 
 void
@@ -99,7 +116,7 @@ ease_advance() {
                 }
                 break;
             case F_RAINBOW:
-                color.h++;
+                color.h += 3;
                 color.h %= HUE_MAX;
                 leds[i].target.h = color.h;
                 break;

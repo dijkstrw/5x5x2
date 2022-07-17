@@ -41,13 +41,14 @@ typedef struct {
     };
 } __attribute__ ((packed)) hsv_t;
 
-#define PACK_HSV(h, s, v)          ((uint32_t) (((v & 0xff) << 24) | ((s & 0xff) << 16) | (h << 3)))
-#define COLOR_PURPLE               PACK_HSV(300, 0xff, 0x7f)
-#define COLOR_WHITE                PACK_HSV(0, 0xff, 0xff)
+#define HSV(Hue, Saturation, Value) { .h = Hue, .s = Saturation, .v = Value }
 
-#define HUE_SEXTANT                0x100
-#define SEXTANT_MAX                6
-#define HUE_MAX                    ((SEXTANT_MAX * HUE_SEXTANT) - 1)
+#define HSV_WHITE                   HSV(0, 0xff, 0xff)
+#define HSV_PURPLE                  HSV(300, 0xff, 0x7f)
+
+#define HUE_SEXTANT                 0x100
+#define SEXTANT_MAX                 6
+#define HUE_MAX                     ((SEXTANT_MAX * HUE_SEXTANT) - 1)
 
 uint8_t key2led(uint8_t row, uint8_t column);
 void hsv2rgb(hsv_t *h, rgbpixel_t *p);

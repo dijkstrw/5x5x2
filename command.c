@@ -127,7 +127,7 @@ command_set_macro(struct ring *input_ring)
     elog("macro not closed of with eol");
 }
 
-static
+static void
 command_set_rotary(struct ring *input_ring)
 {
     uint8_t alayer, adirection;

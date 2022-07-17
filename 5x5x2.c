@@ -78,7 +78,6 @@ main(void)
 {
     uint32_t enumeration_timer;
     uint32_t led_timer = 0;
-    uint32_t j = 0;
 
     mcu_init();
 
@@ -97,16 +96,17 @@ main(void)
     usb_init();
     flash_read_config();
 
-    elog("initialized");
     ease_init();
-    ease_set(0, 1, COLOR_PURPLE, F_EASEQUADIN);
-    ease_set(0, 2, COLOR_WHITE, F_RAINBOW);
+    ease_rainbow();
+
+    elog("initialized");
+
     enumeration_active = true;
 
     while (1) {
         if (timer_passed(led_timer)) {
             ease_advance();
-            led_timer = timer_set(3);
+            led_timer = timer_set(1);
         }
 
         if (enumeration_active) {
@@ -127,6 +127,7 @@ main(void)
                                            (1 << IF_NKRO)     |
                                            (1 << IF_SERIALCOMM))) &&
                    (!timer_passed(enumeration_timer))) {
+                led_state(usb_ifs_enumerated);
                 __asm__("nop");
             }
 

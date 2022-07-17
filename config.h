@@ -85,12 +85,13 @@
 #define FLASH_PAGE_NUM        4
 #define FLASH_PAGE_SIZE       0x400
 
-#define LEDS_GPIO             GPIOC
-#define LEDS_RCC              RCC_GPIOC
-#define LEDS_BV               (GPIO13 | GPIO14 | GPIO15)
-#define LED1IO                GPIO13
-#define LED2IO                GPIO14
-#define LED3IO                GPIO15
+#define LEDS_GPIO             GPIOB
+#define LEDS_RCC              RCC_GPIOB
+#define LEDS_BV               (GPIO12 | GPIO13 | GPIO14 | GPIO15)
+#define LED1IO                GPIO12
+#define LED2IO                GPIO13
+#define LED3IO                GPIO14
+#define LED4IO                GPIO15
 
 #define AUTOMOUSE_LED_ACTIVE  (1<<2)
 #define AUTOMOUSE_LED_PRESS   (1<<1)
@@ -112,7 +113,7 @@
 #define DMA_IRQ               NVIC_DMA1_CHANNEL3_IRQ
 #define DMA_ISR_FUNCTION      dma1_channel3_isr
 
-#define BACKLIGHT_LEDS_NUM    3
+#define BACKLIGHT_LEDS_NUM    8
 
 /*
  * Rotary encoder
