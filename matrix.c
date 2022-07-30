@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2015-2022 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,8 @@
  * Matrix
  *
  * Tasks:
- * - scan the hardware matrix
+ * - scan the hardware matrix, taking into account transmission lines
+ *   and debouncing the result
  * - determine if there is a keydown or keyup event
  * - if so, trigger keyboard, mouse, extrakey events
  */
@@ -44,13 +45,12 @@
 #include "matrix.h"
 #include "keymap.h"
 
-
-static uint32_t debounce;
-static bool matrix_update;
+static uint32_t debounce[ROWS_NUM];
+static bool update[ROWS_NUM];
 matrix_t matrix;
 static matrix_t matrix_debounce;
 static matrix_t matrix_previous;
-uint8_t show_matrix = 0;
+static uint8_t current;
 
 /*
  * row_select
@@ -114,46 +114,45 @@ matrix_init(void)
         matrix.row[i] = 0;
         matrix_debounce.row[i] = 0;
         matrix_previous.row[i] = 0;
+        debounce[i] = 0;
     }
+
+    current = 0;
+    row_select(current);
 }
 
 /*
- * matrix_scan
+ * matrix_row_scan
  *
- * Read the matrix; select each row, and read column value. Debounce by quickly
- * noting the current value, and only taking that value after it has been
- * stable for DEBOUNCE ms.
+ * Scan the matrix a row at a time.
+ *
+ * A row was selected and set high in the previous call to matrix
+ * scan, and the next call will scan the columns. This time between
+ * row set and column read allows for the signal to stabilize
+ * (necessary for long tracks or bad termination). Debounce by making
+ * sure that a column (set) is stable for at least MS_DEBOUNCE ms.
  */
 void
-matrix_scan()
+matrix_row_scan()
 {
-    uint8_t r;
     uint16_t col;
 
-    for (r = 0; r < ROWS_NUM; r++) {
-        row_select(r);
-        /* My new board has lines that are too long and some time to stabilise */
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        __asm__("nop");
-        col = col_read();
-        if (matrix_debounce.row[r] != col) {
-            matrix_debounce.row[r] = col;
-            matrix_update = true;
-            debounce = timer_set(MS_DEBOUNCE);
-        }
-        row_clear();
+    col = col_read();
+    if (matrix_debounce.row[current] != col) {
+        matrix_debounce.row[current] = col;
+        update[current] = true;
+        debounce[current] = timer_set(MS_DEBOUNCE);
     }
 
-    if (matrix_update && timer_passed(debounce)) {
-        matrix_update = false;
-        for (r = 0; r < ROWS_NUM; r++) {
-            matrix.row[r] = matrix_debounce.row[r];
-        }
+    if (update[current] && timer_passed(debounce[current])) {
+        update[current] = false;
+        matrix.row[current] = matrix_debounce.row[current];
     }
+
+    row_clear();
+    current +=1;
+    current %= ROWS_NUM;
+    row_select(current);
 }
 
 /*
@@ -163,13 +162,14 @@ matrix_scan()
  * state.
  */
 void
-matrix_process()
+matrix_row_process()
 {
     uint8_t r, c;
     uint16_t col, colbit;
 
     /* Make sure that we pick up new scan events */
-    matrix_scan();
+    r = current;
+    matrix_row_scan();
 
     /*
      * Check for scan events, even if the previous matrix scan returned
@@ -177,32 +177,14 @@ matrix_process()
      * matrix.
      */
 
-    for (r = 0; r < ROWS_NUM; r++) {
-        col = matrix.row[r] ^ matrix_previous.row[r];
-        if (col) {
-            for (c = 0; c < COLS_NUM; c++) {
-                colbit = (1 << c);
-                if (col & colbit) {
-                    if (show_matrix) matrix_debug();
-                    keymap_event(r, c, matrix.row[r] & colbit);
-                    matrix_previous.row[r] ^= colbit;
-                }
+    col = matrix.row[r] ^ matrix_previous.row[r];
+    if (col) {
+        for (c = 0; c < COLS_NUM; c++) {
+            colbit = (1 << c);
+            if (col & colbit) {
+                keymap_event(r, c, matrix.row[r] & colbit);
+                matrix_previous.row[r] ^= colbit;
             }
         }
-    }
-}
-
-/*
- * matrix_debug
- *
- * Debugging routine that will emit the current module local state
- */
-void
-matrix_debug(void)
-{
-    uint8_t i;
-
-    for (i = 0; i < ROWS_NUM; i++) {
-        printf("%02x :%02x\n", i, (unsigned int) matrix.row[i]);
     }
 }

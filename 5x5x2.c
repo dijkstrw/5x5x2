@@ -145,7 +145,7 @@ main(void)
         }
 
         if (keyboard_active) {
-            matrix_process();
+            matrix_row_process();
             rotary_process();
         }
 

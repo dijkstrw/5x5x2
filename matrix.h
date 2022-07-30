@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2015-2022 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,9 +38,8 @@ typedef struct {
 extern matrix_t matrix;
 
 void matrix_init(void);
-void matrix_scan(void);
-void matrix_process(void);
+void matrix_row_scan(void);
+void matrix_row_process(void);
 void matrix_event(uint16_t row, uint16_t col, bool pressed);
-void matrix_debug(void);
 
 #endif /* _MATRIX_H */
