@@ -105,6 +105,9 @@ matrix_init(void)
     gpio_set_mode(ROWS_GPIO, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, ROWS_BV);
     gpio_set_mode(COLS_GPIO, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, COLS_BV);
 
+    /* Enable pulldowns on column pins */
+    gpio_clear(COLS_GPIO, COLS_BV);
+
     row_clear();
 
     for (i = 0; i < ROWS_NUM; i++) {
@@ -129,6 +132,13 @@ matrix_scan()
 
     for (r = 0; r < ROWS_NUM; r++) {
         row_select(r);
+        /* My new board has lines that are too long and some time to stabilise */
+        __asm__("nop");
+        __asm__("nop");
+        __asm__("nop");
+        __asm__("nop");
+        __asm__("nop");
+        __asm__("nop");
         col = col_read();
         if (matrix_debounce.row[r] != col) {
             matrix_debounce.row[r] = col;
