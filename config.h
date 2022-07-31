@@ -61,9 +61,11 @@
  *
  * Debounce, how long does a key need to be down to be pressed
  * Enumerate, how long may enumeration take before reset
+ * Ease, how often are the rgbleds updated
  */
 #define MS_DEBOUNCE           10
 #define MS_ENUMERATE          5000
+#define MS_EASE               1
 
 /*
  * Number of layers possible in keymap definition
@@ -113,7 +115,10 @@
 #define DMA_IRQ               NVIC_DMA1_CHANNEL3_IRQ
 #define DMA_ISR_FUNCTION      dma1_channel3_isr
 
-#define BACKLIGHT_LEDS_NUM    8
+#define RGB_KEYS_NUM          (COLS_NUM * ROWS_NUM)
+#define RGB_BACKLIGHT_NUM     8
+#define RGB_ALL_NUM           (RGB_KEYS_NUM + RGB_BACKLIGHT_NUM)
+#define RGB_BACKLIGHT_OFFSET  RGB_KEYS_NUM
 
 /*
  * Rotary encoder

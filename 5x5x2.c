@@ -77,7 +77,6 @@ int
 main(void)
 {
     uint32_t enumeration_timer;
-    uint32_t led_timer = 0;
 
     mcu_init();
 
@@ -97,18 +96,13 @@ main(void)
     flash_read_config();
 
     ease_init();
-    ease_rainbow();
+    ease_rainbow(3);
 
     elog("initialized");
 
     enumeration_active = true;
 
     while (1) {
-        if (timer_passed(led_timer)) {
-            ease_advance();
-            led_timer = timer_set(1);
-        }
-
         if (enumeration_active) {
             /*
              * Note that this is the start state, but renewing
@@ -128,17 +122,20 @@ main(void)
                                            (1 << IF_SERIALCOMM))) &&
                    (!timer_passed(enumeration_timer))) {
                 led_state(usb_ifs_enumerated);
-                __asm__("nop");
+                ease_process();
             }
 
             if (!usb_ifs_enumerated) {
                 elog("enumeration failed");
                 scb_reset_system();
+            } else {
+                enumeration_active = false;
+                keyboard_active = serial_active = true;
+                led_state(0);
             }
-
-            enumeration_active = false;
-            keyboard_active = serial_active = true;
         }
+
+        ease_process();
 
         if (serial_active) {
             serial_out();

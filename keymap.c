@@ -43,6 +43,7 @@
 #include "keymap.h"
 #include "macro.h"
 #include "mouse.h"
+#include "rgbease.h"
 #include "serial.h"
 #include "usb_keycode.h"
 
@@ -112,6 +113,11 @@ void
 keymap_event(uint16_t row, uint16_t col, bool pressed)
 {
     event_t *event = &keymap[layer][row][col];
+    hsv_t color = HSV_WHITE;
+
+    if (pressed) {
+        ease_set(row, col, color, F_BLIP);
+    }
 
     switch (event->type) {
         case KMT_KEY:

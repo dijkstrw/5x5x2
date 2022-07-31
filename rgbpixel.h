@@ -36,7 +36,7 @@ typedef struct {
     uint8_t b;
 } __attribute__ ((packed)) rgbpixel_t;
 
-extern rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
+extern rgbpixel_t frame[RGB_ALL_NUM];
 
 void rgbpixel_init(void);
 void rgbpixel_render(void);

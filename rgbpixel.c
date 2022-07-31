@@ -78,8 +78,8 @@ typedef enum {
     TX_PIXEL_ARRAY,
 } spistatus_t;
 
-rgbpixel_t frame[BACKLIGHT_LEDS_NUM];
-static spipixel_t spi[2][BACKLIGHT_LEDS_NUM];
+rgbpixel_t frame[RGB_ALL_NUM];
+static spipixel_t spi[2][RGB_ALL_NUM];
 static volatile uint8_t active_buffer = 0;
 static volatile spistatus_t status = TX_RESET_PULSE;
 static uint32_t resetdata = 0;
@@ -97,7 +97,7 @@ rgbpixel_reset()
      * Setup the bits that are always on, i.e. the start of a new signalling frame.
      */
     for (i = 0; i < 2; i++) {
-        for (j = 0; j < BACKLIGHT_LEDS_NUM; j++) {
+        for (j = 0; j < RGB_ALL_NUM; j++) {
             spi[i][j].g[0] = spi[i][j].r[0] = spi[i][j].b[0] = 0b10010010;
             spi[i][j].g[1] = spi[i][j].r[1] = spi[i][j].b[1] = 0b01001001;
             spi[i][j].g[2] = spi[i][j].r[2] = spi[i][j].b[2] = 0b00100100;
@@ -242,7 +242,7 @@ rgbpixel_render()
      * spibuffer[0].g = bits ₁7₀₁6₀₁5 ₀₁4₀₁3₀₁ 2₀₁1₀₁0₀
      */
 
-    for (i = 0; i < BACKLIGHT_LEDS_NUM; i++) {
+    for (i = 0; i < RGB_ALL_NUM; i++) {
         for (j = 0; j < sizeof(rgbpixel_t); j++) {
             MMIO8(out + BBOFFSET(2, 1)) = MMIO8(in + BBOFFSET(0, 0));
             MMIO8(out + BBOFFSET(2, 4)) = MMIO8(in + BBOFFSET(0, 1));
@@ -266,7 +266,7 @@ rgbpixel_render()
 void
 rgbpixel_set(uint8_t n, uint8_t r, uint8_t g, uint8_t b)
 {
-    if (n < BACKLIGHT_LEDS_NUM) {
+    if (n < RGB_ALL_NUM) {
         frame[n].g = g;
         frame[n].r = r;
         frame[n].b = b;

@@ -43,7 +43,7 @@ typedef struct {
 
 #define HSV(Hue, Saturation, Value) { .h = Hue, .s = Saturation, .v = Value }
 
-#define HSV_WHITE                   HSV(0, 0xff, 0xff)
+#define HSV_WHITE                   HSV(0, 0, 0xff)
 #define HSV_PURPLE                  HSV(300, 0xff, 0x7f)
 
 #define HUE_SEXTANT                 0x100

@@ -34,6 +34,7 @@
 #include "config.h"
 #include "elog.h"
 #include "keymap.h"
+#include "rgbease.h"
 #include "rotary.h"
 #include "usb_keycode.h"
 
@@ -83,6 +84,7 @@ rotary_process(void)
             event = &rotary[layer][direction];
             if (send_event_if_idle(event, 1)) {
                 last_event = event;
+                ease_rotate(direction);
             }
         }
     }
