@@ -163,7 +163,7 @@ rgbpixel_init()
     spi_reset(SPI_IF);
     spi_init_master(SPI_IF, SPI_CR1_BAUDRATE_FPCLK_DIV_32,
                     SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-                    SPI_CR1_CPHA_CLK_TRANSITION_1,
+                    SPI_CR1_CPHA_CLK_TRANSITION_2,
                     SPI_CR1_DFF_8BIT,
                     SPI_CR1_MSBFIRST);
     spi_enable_software_slave_management(SPI_IF);
