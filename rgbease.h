@@ -24,42 +24,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef _RGBEASE_H
+#define _RGBEASE_H
 
-#ifndef _RGBMAP_H
-#define _RGBMAP_H
+#include "rgbmap.h"
 
-#include "rgbpixel.h"
+enum {
+    F_NOP = 0,
+    F_EASEQUADIN,
+    F_EASEQUADOUT,
+    F_RAINBOW,
+    F_DIM,
+    F_BRIGHTEN,
+    F_BLIP,
+    F_BACKLIGHT,
+};
+
+typedef uint8_t fract8;
 
 typedef struct {
-    union {
-        struct {
-            uint16_t h;
-            uint8_t s;
-            uint8_t v;
-        };
-        uint32_t raw;
-    };
-} __attribute__ ((packed)) hsv_t;
+    hsv_t target;
+    uint8_t f;
+    uint8_t step;
+    uint8_t phase;
+} rgbease;
 
-#define HSV(Hue, Saturation, Value) { .h = Hue * (HUE_SEXTANT/60), .s = Saturation, .v = Value }
+#define LAST_STEP             0xff
+#define RAINBOW_STEP          0x03
 
-#define HSV_WHITE                   HSV(  0,    0, 0xff)
-#define HSV_BLACK                   HSV(  0,    0, 0)
-
-#define HSV_RED                     HSV(  0, 0xff, 0x80)
-#define HSV_ORANGE                  HSV( 30, 0xff, 0x80)
-#define HSV_YELLOW                  HSV( 60, 0xff, 0x80)
-#define HSV_GREEN                   HSV(120, 0xff, 0x80)
-#define HSV_CYAN                    HSV(180, 0xff, 0x80)
-#define HSV_BLUE                    HSV(240, 0xff, 0x80)
-#define HSV_PURPLE                  HSV(270, 0xff, 0x80)
-#define HSV_MAGENTA                 HSV(300, 0xff, 0x80)
-
-#define HUE_SEXTANT                 0x100
-#define SEXTANT_MAX                 6
-#define HUE_MAX                     ((SEXTANT_MAX * HUE_SEXTANT) - 1)
-
-uint8_t key2led(uint8_t row, uint8_t column);
-void hsv2rgb(hsv_t *h, rgbpixel_t *p);
+void ease_init(void);
+void ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f);
+void ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t phase);
+void ease_rainbow(uint8_t times);
+void ease_advance(void);
+void ease_process(void);
 
 #endif

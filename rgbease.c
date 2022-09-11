@@ -34,6 +34,7 @@
 #include "clock.h"
 #include "config.h"
 #include "rgbease.h"
+#include "rotary.h"
 
 static rgbease leds[RGB_ALL_NUM];
 static uint32_t ease_timer = 0;
@@ -105,19 +106,34 @@ ease_dim_all(void)
     }
 }
 
+uint32_t _rotate_timer = 0;
 void
 ease_rotate(uint8_t direction)
 {
     uint8_t i;
-    hsv_t color = HSV(0xff, 0x80, 0x80);
-    uint8_t phase = (LAST_STEP / RGB_BACKLIGHT_NUM) * 2;
+    uint8_t offset;
+    hsv_t color_green = HSV_GREEN;
+    hsv_t color_red = HSV_RED;
+    hsv_t color;
+
+    /* Only set one led per ease * 2 interval */
+    if (_rotate_timer == ease_timer) {
+        return;
+    } else {
+        _rotate_timer = ease_timer + MS_EASE;
+    }
 
     for (i = 0; i < RGB_BACKLIGHT_NUM; i++) {
-        ease_set_direct(RGB_BACKLIGHT_OFFSET + i, color, F_ROTATE_FORWARD, 0, phase);
-        if (color.h < phase) {
-            color.h = 0;
-        } else {
-            color.h -= phase;
+        if (direction == ROTARY_FORWARD) {
+            offset = RGB_BACKLIGHT_OFFSET + i;
+            color = color_green;
+        } else if (direction == ROTARY_BACKWARD) {
+            offset = RGB_BACKLIGHT_OFFSET + RGB_BACKLIGHT_NUM - 1 - i;
+            color = color_red;
+        }
+        if (leds[offset].f != F_BLIP) {
+            ease_set_direct(offset, color, F_BLIP, 0, 0);
+            return;
         }
     }
 }
@@ -126,13 +142,19 @@ void
 ease_advance() {
     uint8_t i;
     hsv_t color;
+    hsv_t color_backlight = HSV_ORANGE;
     uint8_t step;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
         color = leds[i].target;
         switch (leds[i].f) {
             case F_NOP:
-                continue;
+                if (i > RGB_BACKLIGHT_OFFSET) {
+                    color = color_backlight;
+                    ease_set_direct(i, color, F_BACKLIGHT, 0 , 0);
+                } else {
+                    continue;
+                }
             case F_EASEQUADIN:
                 step = ease8_inoutquad(++leds[i].step);
                 color.s = scale8(color.s, step);
@@ -194,14 +216,8 @@ ease_advance() {
                         break;
                 }
                 break;
-            case F_ROTATE_FORWARD:
-                leds[i].step += 1;
-                if (leds[i].step == 60) {
-                    leds[i].step = 0;
-                    color.h += leds[i].phase;
-                    color.h %= HUE_MAX;
-                    leds[i].target = color;
-                }
+            case F_BACKLIGHT:
+                color.v = scale8(color.v, 0x20);
                 break;
         }
 
