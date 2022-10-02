@@ -31,12 +31,11 @@
 
 enum {
     F_NOP = 0,
-    F_EASEQUADIN,
-    F_EASEQUADOUT,
-    F_RAINBOW,
-    F_DIM,
+    F_COLOR_FLASH,
+    F_COLOR_HOLD,
     F_BRIGHTEN,
-    F_BLIP,
+    F_DIM,
+    F_RAINBOW,
     F_BACKLIGHT,
 };
 
@@ -46,17 +45,37 @@ typedef struct {
     hsv_t target;
     uint8_t f;
     uint8_t step;
-    uint8_t phase;
+    uint8_t round;
 } rgbease;
 
-#define LAST_STEP             0xff
-#define RAINBOW_STEP          0x03
+typedef struct {
+    hsv_t target;
+    uint8_t f;
+    uint8_t step;
+    uint8_t round;
+    uint8_t group;
+} rgbaction;
+
+#define STEP_LAST             0xff
+#define STEP_RAINBOW          0x03
+
+#define ROUND_LAST            0xff
+#define ROUND_FIRST           0x00
+#define ROUND_SECOND          0x01
+#define ROUND_THIRD           0x02
+
+#define GROUP_LAST            0xff
+
+#define EASE(Target, Func, Step, Round, Group) { .target = Target, .f = Func, .step = Step, .round = Round, .group = Group }
 
 void ease_init(void);
-void ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f);
-void ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t phase);
-void ease_rainbow(uint8_t times);
 void ease_advance(void);
+void ease_dim_all(void);
+void ease_event(uint8_t row, uint8_t column, bool pressed);
 void ease_process(void);
+void ease_rainbow(uint8_t times);
+void ease_rotate(uint8_t direction);
+void ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f);
+void ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
 
 #endif

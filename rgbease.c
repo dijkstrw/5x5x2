@@ -39,12 +39,106 @@
 static rgbease leds[RGB_ALL_NUM];
 static uint32_t ease_timer = 0;
 
-static uint8_t scale8(uint8_t i, fract8 scale)
+static uint8_t group[ROWS_NUM][COLS_NUM] =
+{
+    { 1,  1,  1,  1,  2 },
+    { 1,  1,  1,  1,  1 },
+    { 2,  2,  2,  2,  2 },
+    { 3,  3,  3,  3,  3 },
+    { 3,  3,  3,  3,  3 },
+};
+
+/*
+ * Actions are stored per key release and press event
+ */
+#define PRESSED_NUM                2
+
+static rgbaction action[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
+{
+    {
+        {
+            EASE(HSV_PURPLE_HALF,  F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_RED_HALF,     F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_ORANGE_HALF,  F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_YELLOW_HALF,  F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_GREEN_HALF,   F_COLOR_HOLD, 0, 0, 1)
+        },
+        {
+            EASE(HSV_CYAN_HALF,    F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_BLUE_HALF,    F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_PURPLE_HALF,  F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_MAGENTA_HALF, F_COLOR_HOLD, 0, 0, 1),
+            EASE(HSV_WHITE_HALF,   F_COLOR_HOLD, 0, 0, 2)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+    },
+    {
+        {
+            EASE(HSV_PURPLE,       F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_RED,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_ORANGE,       F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_YELLOW,       F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_GREEN,        F_COLOR_HOLD, 0, 0, 2)
+        },
+        {
+            EASE(HSV_CYAN,         F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_BLUE,         F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_PURPLE,       F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_MAGENTA,      F_COLOR_HOLD, 0, 0, 0),
+            EASE(HSV_WHITE,        F_COLOR_HOLD, 0, 0, 0)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+        {
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
+            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+        },
+    }
+};
+
+static uint8_t
+scale8(uint8_t i, fract8 scale)
 {
     return ((uint16_t)i * (uint16_t)(scale)) >> 8;
 }
 
-uint8_t ease8_inoutquad(uint8_t i)
+static uint8_t
+ease8_inoutquad(uint8_t i)
 {
     uint8_t j = i;
     if (j & 0x80) {
@@ -64,6 +158,31 @@ ease_init() {
 }
 
 void
+ease_event(uint8_t row, uint8_t column, bool pressed)
+{
+    uint8_t r, c, id;
+    rgbaction *act = &action[pressed][row][column];
+
+    if (act->f == F_NOP) {
+        return;
+    } else {
+        if (act->group) {
+            for (r = 0; r < ROWS_NUM; r++) {
+                for (c = 0; c < COLS_NUM; c++) {
+                    if (act->group == group[r][c]) {
+                        id = key2led(r, c);
+                        ease_set_direct(id, act->target, act->f, act->step, act->round);
+                    }
+                }
+            }
+        } else {
+            id = key2led(row, column);
+            ease_set_direct(id, act->target, act->f, act->step, act->round);
+        }
+    }
+}
+
+void
 ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f)
 {
     uint8_t id = key2led(row, column);
@@ -72,14 +191,14 @@ ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f)
 }
 
 void
-ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t phase)
+ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round)
 {
     rgbease *led = &leds[id];
 
     led->target = target;
     led->f = f;
     led->step = step;
-    led->phase = phase;
+    led->round = round;
 }
 
 void
@@ -131,8 +250,8 @@ ease_rotate(uint8_t direction)
             offset = RGB_BACKLIGHT_OFFSET + RGB_BACKLIGHT_NUM - 1 - i;
             color = color_red;
         }
-        if (leds[offset].f != F_BLIP) {
-            ease_set_direct(offset, color, F_BLIP, 0, 0);
+        if (leds[offset].f != F_COLOR_FLASH) {
+            ease_set_direct(offset, color, F_COLOR_FLASH, 0, 0);
             return;
         }
     }
@@ -155,67 +274,69 @@ ease_advance() {
                 } else {
                     continue;
                 }
-            case F_EASEQUADIN:
-                step = ease8_inoutquad(++leds[i].step);
-                color.s = scale8(color.s, step);
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].f = F_EASEQUADOUT;
-                }
                 break;
-            case F_EASEQUADOUT:
-                step = ease8_inoutquad(++leds[i].step);
-                color.s = scale8(color.s, 0xff - step);
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].f = F_EASEQUADIN;
-                }
-                break;
-            case F_DIM:
-                step = ease8_inoutquad(++leds[i].step);
-                color.v = scale8(color.v, LAST_STEP - step);
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].f = F_NOP;
-                    color.v = 0;
-                }
-                break;
-            case F_BRIGHTEN:
-                step = ease8_inoutquad(++leds[i].step);
-                color.v = scale8(color.v, step);
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].f = F_NOP;
-                }
-                break;
-            case F_RAINBOW:
-                ++leds[i].step;
-                color.h += 3;
-                color.h %= HUE_MAX;
-                leds[i].target.h = color.h;
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].phase--;
-                    if (leds[i].phase == 0) {
-                        leds[i].f = F_DIM;
-                    }
-                }
-                break;
-            case F_BLIP:
+
+            case F_COLOR_FLASH:
                 leds[i].step += 3;
                 step = ease8_inoutquad(leds[i].step);
-                if (leds[i].step == LAST_STEP) {
-                    leds[i].phase++;
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].round++;
                     leds[i].step = 0;
                 }
-                switch (leds[i].phase) {
-                    case 0:
+                switch (leds[i].round) {
+                    case ROUND_FIRST:
+                        /* move towards the color */
                         color.v = scale8(color.v, step);
                         break;
-                    case 1:
-                        color.v = scale8(color.v, LAST_STEP - step);
+                    case ROUND_SECOND:
+                        color.v = scale8(color.v, STEP_LAST - step);
                         break;
-                    case 2:
+                    case ROUND_THIRD:
                         leds[i].f = F_NOP;
                         color.v = 0;
                         break;
                 }
                 break;
+
+            case F_COLOR_HOLD:
+                /* move towards the color */
+                step = ease8_inoutquad(++leds[i].step);
+                color.v = scale8(color.v, step);
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].f = F_NOP;
+                }
+                break;
+
+            case F_DIM:
+                step = ease8_inoutquad(++leds[i].step);
+                color.v = scale8(color.v, STEP_LAST - step);
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].f = F_NOP;
+                    color.v = 0;
+                }
+                break;
+
+            case F_BRIGHTEN:
+                step = ease8_inoutquad(++leds[i].step);
+                color.v = scale8(color.v, step);
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].f = F_NOP;
+                }
+                break;
+
+            case F_RAINBOW:
+                ++leds[i].step;
+                color.h += STEP_RAINBOW;
+                color.h %= HUE_MAX;
+                leds[i].target.h = color.h;
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].round--;
+                    if (leds[i].round == 0) {
+                        leds[i].f = F_DIM;
+                    }
+                }
+                break;
+
             case F_BACKLIGHT:
                 color.v = scale8(color.v, 0x20);
                 break;

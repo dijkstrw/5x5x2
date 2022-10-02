@@ -113,11 +113,8 @@ void
 keymap_event(uint16_t row, uint16_t col, bool pressed)
 {
     event_t *event = &keymap[layer][row][col];
-    hsv_t color = HSV_WHITE;
 
-    if (pressed) {
-        ease_set(row, col, color, F_BLIP);
-    }
+    ease_event(row, col, pressed);
 
     switch (event->type) {
         case KMT_KEY:
