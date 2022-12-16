@@ -70,7 +70,7 @@
 /*
  * Number of layers possible in keymap definition
  */
-#define LAYERS_NUM            5
+#define LAYERS_NUM            3
 
 /*
  * Number of macro keys, and max len of a macro sequence

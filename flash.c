@@ -43,6 +43,7 @@
 #include "elog.h"
 #include "keyboard.h"
 #include "keymap.h"
+#include "layer.h"
 #include "macro.h"
 #include "rotary.h"
 
@@ -200,17 +201,17 @@ flash_write_config(void)
 
     elog("writing configuration");
 
-    if (! flash_write_block(&flash.data.keymap,
+    if (!flash_write_block(&flash.data.keymap,
                             keymap,
                             sizeof(flash.data.keymap))) {
         return 0;
     }
-    if (! flash_write_block(&flash.data.rotary,
+    if (!flash_write_block(&flash.data.rotary,
                             rotary,
                             sizeof(flash.data.rotary))) {
         return 0;
     }
-    if (! flash_write_block(&flash.data.macro_buffer,
+    if (!flash_write_block(&flash.data.macro_buffer,
                             macro_buffer,
                             sizeof(flash.data.macro_buffer))) {
         return 0;

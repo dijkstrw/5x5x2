@@ -34,6 +34,7 @@
 #include "config.h"
 #include "elog.h"
 #include "keymap.h"
+#include "layer.h"
 #include "rgbease.h"
 #include "rotary.h"
 #include "usb_keycode.h"

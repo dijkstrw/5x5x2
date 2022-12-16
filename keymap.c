@@ -41,6 +41,7 @@
 #include "extrakey.h"
 #include "keyboard.h"
 #include "keymap.h"
+#include "layer.h"
 #include "macro.h"
 #include "mouse.h"
 #include "rgbease.h"
@@ -54,11 +55,16 @@ event_t keymap[LAYERS_NUM][ROWS_NUM][COLS_NUM] =
         { _K(F18), _K(F19), _K(F20), _K(F21), _K(F22) },
         { _C(VOLUMEINC), _C(VOLUMEDEC), _C(PLAY), _C(FASTFORWARD), _C(MUTE) },
         { _K(PAD_1), _K(PAD_2), _K(PAD_3), _K(PAD_4), _K(PAD_5) },
-        { _MA(0), _K(PAD_7), _AM(MOUSE_BUTTON1, 20, 1), _K(PAD_9), _MA(1) }
+        { _L(NEXTKEY, 1), _K(PAD_7), _AM(MOUSE_BUTTON1, 20, 1), _K(PAD_9), _MA(0) }
+    },
+    {
+        { _K(INTER1), _K(INTER2), _K(INTER3), _K(INTER4), _K(INTER5) },
+        { _K(INTER6), _K(INTER7), _K(INTER8), _K(INTER9), _K(LANG1) },
+        { _K(LANG1), _K(LANG2), _K(LANG3), _K(LANG4), _K(LANG5) },
+        { _K(PAD_A), _K(PAD_B), _K(PAD_C), _K(PAD_D), _K(PAD_E) },
+        { _MA(1), _MA(2), _MA(3), _MA(4), _MA(5) },
     },
 };
-
-uint8_t layer = 0;
 
 void
 keymap_dump()
@@ -119,34 +125,41 @@ keymap_event(uint16_t row, uint16_t col, bool pressed)
     switch (event->type) {
         case KMT_KEY:
             keyboard_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_MOUSE:
             mouse_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_AUTOMOUSE:
             automouse_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_WHEEL:
             wheel_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_CONSUMER:
             extrakey_consumer_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_SYSTEM:
             extrakey_system_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
 
         case KMT_LAYER:
-            layer = event->layer.number % LAYERS_NUM;
+            layer_event(event, pressed);
             break;
 
         case KMT_MACRO:
             macro_event(event, pressed);
+            layer_use_event(event, pressed);
             break;
     }
 }
