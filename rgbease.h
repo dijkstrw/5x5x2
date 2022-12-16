@@ -39,14 +39,14 @@ enum {
     F_BACKLIGHT,
 };
 
-typedef uint8_t fract8;
+typedef uint8_t fract8_t;
 
 typedef struct {
     hsv_t target;
     uint8_t f;
     uint8_t step;
     uint8_t round;
-} rgbease;
+} rgbease_t;
 
 typedef struct {
     hsv_t target;
@@ -54,7 +54,7 @@ typedef struct {
     uint8_t step;
     uint8_t round;
     uint8_t group;
-} rgbaction;
+} rgbaction_t;
 
 #define STEP_LAST             0xff
 #define STEP_RAINBOW          0x03

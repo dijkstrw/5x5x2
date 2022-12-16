@@ -36,7 +36,7 @@
 #include "rgbease.h"
 #include "rotary.h"
 
-static rgbease leds[RGB_ALL_NUM];
+static rgbease_t leds[RGB_ALL_NUM];
 static uint32_t ease_timer = 0;
 
 static uint8_t group[ROWS_NUM][COLS_NUM] =
@@ -53,7 +53,7 @@ static uint8_t group[ROWS_NUM][COLS_NUM] =
  */
 #define PRESSED_NUM                2
 
-static rgbaction action[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
+static rgbaction_t action[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
 {
     {
         {
@@ -132,7 +132,7 @@ static rgbaction action[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
 };
 
 static uint8_t
-scale8(uint8_t i, fract8 scale)
+scale8(uint8_t i, fract8_t scale)
 {
     return ((uint16_t)i * (uint16_t)(scale)) >> 8;
 }
@@ -161,7 +161,7 @@ void
 ease_event(uint8_t row, uint8_t column, bool pressed)
 {
     uint8_t r, c, id;
-    rgbaction *act = &action[pressed][row][column];
+    rgbaction_t *act = &action[pressed][row][column];
 
     if (act->f == F_NOP) {
         return;
@@ -193,7 +193,7 @@ ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f)
 void
 ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round)
 {
-    rgbease *led = &leds[id];
+    rgbease_t *led = &leds[id];
 
     led->target = target;
     led->f = f;
@@ -217,7 +217,7 @@ void
 ease_dim_all(void)
 {
     uint8_t i;
-    rgbease *led;
+    rgbease_t *led;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
         led = &leds[i];
