@@ -24,58 +24,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _RGBEASE_H
-#define _RGBEASE_H
 
-#include "rgbmap.h"
+#include "palette.h"
 
-enum {
-    F_NOP = 0,
-    F_COLOR_FLASH,
-    F_COLOR_HOLD,
-    F_BRIGHTEN,
-    F_DIM,
-    F_RAINBOW,
-    F_BACKLIGHT,
+hsv_t palette[PALETTE_NUM] = {
+    HSV_BLACK,
+    HSV_WHITE,
+
+    HSV_LIME,
+    HSV_VERMILION,
+    
+    HSV_RED,
+    HSV_YELLOW,
+    HSV_BLIME,
+    HSV_AQUA,
+    HSV_BLUE,
+    HSV_FUCHSIA,
+
+    HSV_VERMILION,
+    HSV_AMBER,
+    HSV_CHARTREUSE,
+    HSV_GASHYANTA,
+    HSV_CAPRI,
+    HSV_VIOLET,
 };
-
-typedef uint8_t fract8_t;
-
-typedef struct {
-    hsv_t target;
-    uint8_t f;
-    uint8_t step;
-    uint8_t round;
-} rgbease_t;
-
-typedef struct {
-    uint8_t color;
-    uint8_t f;
-    uint8_t step;
-    uint8_t round;
-    uint8_t group;
-} rgbaction_t;
-
-#define STEP_LAST             0xff
-#define STEP_RAINBOW          0x03
-
-#define ROUND_LAST            0xff
-#define ROUND_FIRST           0x00
-#define ROUND_SECOND          0x01
-#define ROUND_THIRD           0x02
-
-#define GROUP_LAST            0xff
-
-#define EASE(Color, Func, Step, Round, Group) { .color = Color, .f = Func, .step = Step, .round = Round, .group = Group }
-
-void ease_init(void);
-void ease_advance(void);
-void ease_dim_all(void);
-void ease_event(uint8_t row, uint8_t column, bool pressed);
-void ease_process(void);
-void ease_rainbow(uint8_t times);
-void ease_rotate(uint8_t direction);
-void ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f);
-void ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
-
-#endif

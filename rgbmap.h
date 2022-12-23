@@ -43,27 +43,6 @@ typedef struct {
 
 #define HSV(Hue, Saturation, Value) { .h = Hue * (HUE_SEXTANT/60), .s = Saturation, .v = Value }
 
-#define HSV_WHITE                   HSV(  0,    0, 0xff)
-#define HSV_WHITE_HALF              HSV(  0,    0, 0x80)
-#define HSV_BLACK                   HSV(  0,    0, 0)
-
-#define HSV_RED                     HSV(  0, 0xff, 0xff)
-#define HSV_RED_HALF                HSV(  0, 0xff, 0x80)
-#define HSV_ORANGE                  HSV( 30, 0xff, 0xff)
-#define HSV_ORANGE_HALF             HSV( 30, 0xff, 0x80)
-#define HSV_YELLOW                  HSV( 60, 0xff, 0xff)
-#define HSV_YELLOW_HALF             HSV( 60, 0xff, 0x80)
-#define HSV_GREEN                   HSV(120, 0xff, 0xff)
-#define HSV_GREEN_HALF              HSV(120, 0xff, 0x80)
-#define HSV_CYAN                    HSV(180, 0xff, 0xff)
-#define HSV_CYAN_HALF               HSV(180, 0xff, 0x80)
-#define HSV_BLUE                    HSV(240, 0xff, 0xff)
-#define HSV_BLUE_HALF               HSV(240, 0xff, 0x80)
-#define HSV_PURPLE                  HSV(270, 0xff, 0xff)
-#define HSV_PURPLE_HALF             HSV(270, 0xff, 0x80)
-#define HSV_MAGENTA                 HSV(300, 0xff, 0xff)
-#define HSV_MAGENTA_HALF            HSV(300, 0xff, 0x80)
-
 #define HUE_SEXTANT                 0x100
 #define SEXTANT_MAX                 6
 #define HUE_MAX                     ((SEXTANT_MAX * HUE_SEXTANT) - 1)

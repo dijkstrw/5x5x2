@@ -120,6 +120,8 @@
 #define RGB_ALL_NUM           (RGB_KEYS_NUM + RGB_BACKLIGHT_NUM)
 #define RGB_BACKLIGHT_OFFSET  RGB_KEYS_NUM
 
+#define PALETTE_NUM           16
+
 /*
  * Rotary encoder
  */
@@ -129,6 +131,5 @@
 #define ROT_TIM               TIM1
 #define ROT_BV                (GPIO8 | GPIO9)
 #define ROT_PERIOD            65535
-
 
 #endif /* _CONFIG_H */

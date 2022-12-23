@@ -33,6 +33,7 @@
 
 #include "clock.h"
 #include "config.h"
+#include "palette.h"
 #include "rgbease.h"
 #include "rotary.h"
 
@@ -57,76 +58,76 @@ static rgbaction_t action[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
 {
     {
         {
-            EASE(HSV_PURPLE_HALF,  F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_RED_HALF,     F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_ORANGE_HALF,  F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_YELLOW_HALF,  F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_GREEN_HALF,   F_COLOR_HOLD, 0, 0, 1)
+            EASE(COLOR_1,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_2,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_3,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_4,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 1)
         },
         {
-            EASE(HSV_CYAN_HALF,    F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_BLUE_HALF,    F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_PURPLE_HALF,  F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_MAGENTA_HALF, F_COLOR_HOLD, 0, 0, 1),
-            EASE(HSV_WHITE_HALF,   F_COLOR_HOLD, 0, 0, 2)
+            EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 1),
+            EASE(COLOR_11,         F_COLOR_HOLD, 0, 0, 2)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
     },
     {
         {
-            EASE(HSV_PURPLE,       F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_RED,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_ORANGE,       F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_YELLOW,       F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_GREEN,        F_COLOR_HOLD, 0, 0, 2)
+            EASE(COLOR_1,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_2,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_3,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_4,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 2)
         },
         {
-            EASE(HSV_CYAN,         F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_BLUE,         F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_PURPLE,       F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_MAGENTA,      F_COLOR_HOLD, 0, 0, 0),
-            EASE(HSV_WHITE,        F_COLOR_HOLD, 0, 0, 0)
+            EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 0),
+            EASE(COLOR_11,         F_COLOR_HOLD, 0, 0, 0)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
         {
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0),
-            EASE(HSV_BLACK,        F_NOP,        0, 0, 0)
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
+            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
         },
     }
 };
@@ -171,13 +172,13 @@ ease_event(uint8_t row, uint8_t column, bool pressed)
                 for (c = 0; c < COLS_NUM; c++) {
                     if (act->group == group[r][c]) {
                         id = key2led(r, c);
-                        ease_set_direct(id, act->target, act->f, act->step, act->round);
+                        ease_set_direct(id, palette[act->color], act->f, act->step, act->round);
                     }
                 }
             }
         } else {
             id = key2led(row, column);
-            ease_set_direct(id, act->target, act->f, act->step, act->round);
+            ease_set_direct(id, palette[act->color], act->f, act->step, act->round);
         }
     }
 }
@@ -231,8 +232,6 @@ ease_rotate(uint8_t direction)
 {
     uint8_t i;
     uint8_t offset;
-    hsv_t color_green = HSV_GREEN;
-    hsv_t color_red = HSV_RED;
     hsv_t color;
 
     /* Only set one led per ease * 2 interval */
@@ -245,10 +244,10 @@ ease_rotate(uint8_t direction)
     for (i = 0; i < RGB_BACKLIGHT_NUM; i++) {
         if (direction == ROTARY_FORWARD) {
             offset = RGB_BACKLIGHT_OFFSET + i;
-            color = color_green;
+            color = palette[COLOR_FORWARD];
         } else if (direction == ROTARY_BACKWARD) {
             offset = RGB_BACKLIGHT_OFFSET + RGB_BACKLIGHT_NUM - 1 - i;
-            color = color_red;
+            color = palette[COLOR_BACKWARD];
         }
         if (leds[offset].f != F_COLOR_FLASH) {
             ease_set_direct(offset, color, F_COLOR_FLASH, 0, 0);
