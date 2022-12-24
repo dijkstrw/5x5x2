@@ -32,12 +32,12 @@
 #include "keyboard.h"
 #include "keymap.h"
 #include "macro.h"
+#include "palette.h"
 #include "ring.h"
+#include "rgbease.h"
 #include "rotary.h"
 #include "serial.h"
 #include "usb.h"
-
-static uint8_t flash_write_active = 0;
 
 static uint8_t
 hex_digit(uint8_t in)
@@ -77,6 +77,36 @@ command_identify(void)
     for (i = 0; i < STRI_MAX; i++) {
         printfnl("%02x: %s", i, usb_strings[i]);
     }
+}
+
+static void
+command_set_ease(struct ring *input_ring)
+{
+    rgbaction_t action;
+    uint8_t apressed, arow, acolumn;
+
+    apressed = read_hex_8(input_ring);
+    arow = read_hex_8(input_ring);
+    acolumn = read_hex_8(input_ring);
+    action.color = read_hex_8(input_ring);
+    action.f = read_hex_8(input_ring);
+    action.step = read_hex_8(input_ring);
+    action.round = read_hex_8(input_ring);
+    action.group = read_hex_8(input_ring);
+
+    rgbease_set(apressed, arow, acolumn, &action);
+}
+
+static void
+command_set_group(struct ring *input_ring)
+{
+    uint8_t arow, acolumn, agroup;
+
+    arow = read_hex_8(input_ring);
+    acolumn = read_hex_8(input_ring);
+    agroup = read_hex_8(input_ring);
+
+    rgbgroup_set(arow, acolumn, agroup);
 }
 
 static void
@@ -128,6 +158,20 @@ command_set_macro(struct ring *input_ring)
 }
 
 static void
+command_set_palette(struct ring *input_ring)
+{
+    hsv_t color;
+    uint8_t anumber;
+
+    anumber = read_hex_8(input_ring);
+    color.h = (read_hex_8(input_ring) << 8) | read_hex_8(input_ring);
+    color.s = read_hex_8(input_ring);
+    color.v = read_hex_8(input_ring);
+
+    palette_set(anumber, color);
+}
+
+static void
 command_set_rotary(struct ring *input_ring)
 {
     uint8_t alayer, adirection;
@@ -148,7 +192,6 @@ void
 command_process(struct ring *input_ring)
 {
     uint8_t c;
-    uint32_t data;
 
     while (ring_read_ch(input_ring, &c) != -1) {
         switch (c) {
@@ -168,8 +211,34 @@ command_process(struct ring *input_ring)
                 command_identify();
                 break;
 
-            case CMD_KEYMAP_DUMP:
-                keymap_dump();
+            case CMD_DUMP:
+                if (ring_read_ch(input_ring, &c) != -1) {
+                    switch (c) {
+                        case DUMP_EASE:
+                            rgbease_dump();
+                            break;
+
+                        case DUMP_GROUP:
+                            rgbgroup_dump();
+                            break;
+                            
+                        case DUMP_KEYMAP:
+                            keymap_dump();
+                            break;
+                            
+                        case DUMP_PALETTE:
+                            palette_dump();
+                            break;
+                    }
+                }
+                break;
+
+            case CMD_EASE_SET:
+                command_set_ease(input_ring);
+                break;
+
+            case CMD_GROUP_SET:
+                command_set_group(input_ring);
                 break;
 
             case CMD_KEYMAP_SET:
@@ -194,6 +263,10 @@ command_process(struct ring *input_ring)
                 printfnl("nkro %d", nkro_active);
                 break;
 
+            case CMD_PALETTE_SET:
+                command_set_palette(input_ring);
+                break;
+
             case CMD_ROTARY_SET:
                 command_set_rotary(input_ring);
                 break;
@@ -201,13 +274,16 @@ command_process(struct ring *input_ring)
             case '?':
                 printfnl("commands:");
                 printfnl("i                - identify");
-                printfnl("d                - dump keymap");
+                printfnl("dt               - dump type: [g]roup, [k]eymap, [e]ase, [p]alette");
+                printfnl("EpprrccCCffssrrgg- set ease: pressed, row, column, color, function, step, round, group");
+                printfnl("Grrccgg          - set group: row, column, group");
                 printfnl("Kllrrcctta1a2a3  - set keymap layer, row, column, type, arg1-3");
                 printfnl("m                - clear all macro keys");
                 printfnl("Mnnstring        - set macro nn with string");
                 printfnl("n                - clear nkro");
                 printfnl("N                - set nkro");
-                printfnl("R                - set rotary layer, direction, type, arg1-3");
+                printfnl("Pnnhhhssvv       - set palette: number, hue, saturation, value");
+                printfnl("Rllddtta1a2a3    - set rotary layer, direction, type, arg1-3");
                 printfnl("L                - load configuration from flash");
                 printfnl("S                - write configuration to flash");
                 printfnl("Z                - erase configuration flash");

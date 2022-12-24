@@ -56,6 +56,10 @@ typedef struct {
     uint8_t group;
 } rgbaction_t;
 
+
+extern uint32_t rgbgroup[ROWS_NUM][COLS_NUM];
+extern rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM];
+
 #define STEP_LAST             0xff
 #define STEP_RAINBOW          0x03
 
@@ -68,14 +72,17 @@ typedef struct {
 
 #define EASE(Color, Func, Step, Round, Group) { .color = Color, .f = Func, .step = Step, .round = Round, .group = Group }
 
-void ease_init(void);
-void ease_advance(void);
-void ease_dim_all(void);
-void ease_event(uint8_t row, uint8_t column, bool pressed);
-void ease_process(void);
-void ease_rainbow(uint8_t times);
-void ease_rotate(uint8_t direction);
-void ease_set(uint8_t row, uint8_t column, hsv_t target, uint8_t f);
-void ease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
+void rgbease_init(void);
+void rgbease_advance(void);
+void rgbease_dim_all(void);
+void rgbease_dump(void);
+void rgbease_event(uint8_t row, uint8_t column, bool pressed);
+void rgbease_process(void);
+void rgbease_rainbow(uint8_t times);
+void rgbease_rotate(uint8_t direction);
+void rgbease_set(uint8_t pressed, uint8_t row, uint8_t column, rgbaction_t *action);
+void rgbease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
 
+void rgbgroup_dump(void);
+void rgbgroup_set(uint8_t row, uint8_t column, uint8_t group);
 #endif

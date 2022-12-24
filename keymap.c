@@ -120,7 +120,7 @@ keymap_event(uint16_t row, uint16_t col, bool pressed)
 {
     event_t *event = &keymap[layer][row][col];
 
-    ease_event(row, col, pressed);
+    rgbease_event(row, col, pressed);
 
     switch (event->type) {
         case KMT_KEY:

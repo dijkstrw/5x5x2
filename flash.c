@@ -45,6 +45,8 @@
 #include "keymap.h"
 #include "layer.h"
 #include "macro.h"
+#include "palette.h"
+#include "rgbease.h"
 #include "rotary.h"
 
 #if MACRO_MAXKEYS % 4
@@ -63,6 +65,9 @@ typedef struct {
     event_t rotary[LAYERS_NUM][ROTARY_DIRECTIONS];
     event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
     uint8_t macro_len[MACRO_MAXKEYS];
+    hsv_t palette[PALETTE_NUM];
+    uint32_t rgbgroup[ROWS_NUM][COLS_NUM];
+    rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM];
     uint32_t layer;
     uint32_t nkro_active;
 } __attribute__ ((packed)) flashdata_t;
@@ -155,6 +160,9 @@ flash_read_config(void)
     memcpy(rotary, flash.data.rotary, sizeof(flash.data.rotary));
     memcpy(macro_buffer, flash.data.macro_buffer, sizeof(flash.data.macro_buffer));
     memcpy(macro_len, flash.data.macro_len, sizeof(flash.data.macro_len));
+    memcpy(palette, flash.data.palette, sizeof(flash.data.palette));
+    memcpy(rgbgroup, flash.data.rgbgroup, sizeof(flash.data.rgbgroup));
+    memcpy(rgbaction, flash.data.rgbaction, sizeof(flash.data.rgbaction));
     layer = flash.data.layer;
     nkro_active = flash.data.nkro_active;
     cm_enable_interrupts();
@@ -219,6 +227,21 @@ flash_write_config(void)
     if (!flash_write_block(&flash.data.macro_len,
                            macro_len,
                            sizeof(flash.data.macro_len))) {
+        return 0;
+    }
+    if (!flash_write_block(&flash.data.palette,
+                           palette,
+                           sizeof(flash.data.palette))) {
+        return 0;
+    }
+    if (!flash_write_block(&flash.data.rgbgroup,
+                           rgbgroup,
+                           sizeof(flash.data.rgbgroup))) {
+        return 0;
+    }
+    if (!flash_write_block(&flash.data.rgbaction,
+                           rgbaction,
+                           sizeof(flash.data.rgbaction))) {
         return 0;
     }
     data = (uint32_t)layer;

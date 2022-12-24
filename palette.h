@@ -125,4 +125,6 @@ enum {
 
 extern hsv_t palette[PALETTE_NUM];
 
+void palette_dump(void);
+void palette_set(uint8_t color, hsv_t hsv);
 #endif

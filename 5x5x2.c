@@ -95,8 +95,8 @@ main(void)
     usb_init();
     flash_read_config();
 
-    ease_init();
-    ease_rainbow(3);
+    rgbease_init();
+    rgbease_rainbow(3);
 
     elog("initialized");
 
@@ -122,7 +122,7 @@ main(void)
                                            (1 << IF_SERIALCOMM))) &&
                    (!timer_passed(enumeration_timer))) {
                 led_state(usb_ifs_enumerated);
-                ease_process();
+                rgbease_process();
             }
 
             if (!usb_ifs_enumerated) {
@@ -135,7 +135,7 @@ main(void)
             }
         }
 
-        ease_process();
+        rgbease_process();
 
         if (serial_active) {
             serial_out();

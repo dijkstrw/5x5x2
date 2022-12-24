@@ -26,6 +26,7 @@
  */
 
 #include "palette.h"
+#include "serial.h"
 
 hsv_t palette[PALETTE_NUM] = {
     HSV_BLACK,
@@ -48,3 +49,24 @@ hsv_t palette[PALETTE_NUM] = {
     HSV_CAPRI,
     HSV_VIOLET,
 };
+
+void
+palette_dump()
+{
+    uint8_t i;
+
+    printfnl("palette:");
+    for (i = 0; i < PALETTE_NUM; i++) {
+        printfnl("hsv %01x: %04x,%02x,%02x ",
+               i,
+               palette[i].h,
+               palette[i].s,
+               palette[i].v);
+    }
+}
+
+void
+palette_set(uint8_t color, hsv_t hsv)
+{
+    palette[color % PALETTE_NUM] = hsv;
+}

@@ -56,6 +56,8 @@
 #define COLS_BV               0b11000111
 #define COLS_DECODE(x)        (((x >> 3) & 0b11000) | (x & 0b111))
 
+#define PRESSED_NUM                2
+
 /*
  * Timeouts:
  *

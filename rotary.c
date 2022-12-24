@@ -85,7 +85,7 @@ rotary_process(void)
             event = &rotary[layer][direction];
             if (send_event_if_idle(event, 1)) {
                 last_event = event;
-                ease_rotate(direction);
+                rgbease_rotate(direction);
             }
         }
     }

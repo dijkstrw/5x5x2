@@ -34,13 +34,21 @@
 #define CMD_FLASH_LOAD    'L'
 #define CMD_FLASH_SAVE    'S'
 #define CMD_IDENTIFY      'i'
-#define CMD_KEYMAP_DUMP   'd'
+#define CMD_DUMP          'd'
+#define CMD_EASE_SET      'E'
+#define CMD_GROUP_SET     'G'
 #define CMD_KEYMAP_SET    'K'
 #define CMD_MACRO_CLEAR   'm'
 #define CMD_MACRO_SET     'M'
 #define CMD_NKRO_CLEAR    'n'
 #define CMD_NKRO_SET      'N'
+#define CMD_PALETTE_SET   'P'
 #define CMD_ROTARY_SET    'R'
+
+#define DUMP_EASE         'e'
+#define DUMP_GROUP        'g'
+#define DUMP_KEYMAP       'k'
+#define DUMP_PALETTE      'p'
 
 void command_process(struct ring *input_ring);
 
