@@ -78,7 +78,7 @@ keymap_dump()
             printf("row %02x: ", r);
             for (c = 0; c < COLS_NUM; c++) {
                 e = keymap_get(l, r, c);
-                printf("%01x,%02x%02x%02x ",
+                printf("%01x,%02x,%02x,%02x ",
                        e->type,
                        e->args.num1,
                        e->args.num2,

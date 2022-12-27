@@ -170,7 +170,7 @@ rgbease_dump()
             printf("row %02x: ", r);
             for (c = 0; c < COLS_NUM; c++) {
                 a = &rgbaction[p][r][c];
-                printf("%01x,%02x%02x%02x%02x ",
+                printf("%01x,%02x,%02x,%02x,%02x ",
                        a->color,
                        a->f,
                        a->step,
