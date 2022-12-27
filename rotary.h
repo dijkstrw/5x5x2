@@ -31,18 +31,19 @@
 #include <stdint.h>
 #include "keymap.h"
 
-#define ROTARY_DIRECTIONS               2
+#define ROTARY_NUM               2
 enum {
     ROTARY_BACKWARD = 0,
     ROTARY_FORWARD = 1,
     ROTARY_NONE = 2
 };
 
-extern event_t rotary[][ROTARY_DIRECTIONS];
+extern event_t rotary[][ROTARY_NUM];
 extern volatile uint16_t rotary_value;
 
 void rotary_init(void);
 void rotary_process(void);
+void rotary_dump(void);
 void rotary_set(uint8_t layer, uint8_t direction, event_t *event);
 
 #endif

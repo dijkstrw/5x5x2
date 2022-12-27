@@ -48,6 +48,7 @@
 #define DUMP_EASE         'e'
 #define DUMP_GROUP        'g'
 #define DUMP_KEYMAP       'k'
+#define DUMP_ROTARY       'r'
 #define DUMP_PALETTE      'p'
 
 void command_process(struct ring *input_ring);

@@ -42,7 +42,7 @@
 static event_t *last_event = NULL;
 volatile uint16_t rotary_value = 0;
 
-event_t rotary[LAYERS_NUM][ROTARY_DIRECTIONS] =
+event_t rotary[LAYERS_NUM][ROTARY_NUM] =
 {
     { _C(VOLUMEDEC), _C(VOLUMEINC) },
 };
@@ -91,6 +91,26 @@ rotary_process(void)
     }
 
     rotary_value = current;
+}
+
+void
+rotary_dump()
+{
+    uint8_t l, d;
+    event_t *e;
+
+    for (l = 0; l < LAYERS_NUM; l++) {
+        printfnl("layer %02x", l);
+        for (d = 0; d < ROTARY_NUM; d++) {
+            e = &rotary[l][d];
+            printfnl("rotary %02x: %01x,%02x,%02x,%02x",
+                     d,
+                     e->type,
+                     e->args.num1,
+                     e->args.num2,
+                     e->args.num3);
+        }
+    }
 }
 
 void

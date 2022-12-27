@@ -225,6 +225,10 @@ command_process(struct ring *input_ring)
                         case DUMP_KEYMAP:
                             keymap_dump();
                             break;
+
+                        case DUMP_ROTARY:
+                            rotary_dump();
+                            break;
                             
                         case DUMP_PALETTE:
                             palette_dump();
@@ -273,20 +277,20 @@ command_process(struct ring *input_ring)
 
             case '?':
                 printfnl("commands:");
-                printfnl("i                - identify");
-                printfnl("dt               - dump type: [g]roup, [k]eymap, [e]ase, [p]alette");
-                printfnl("EpprrccCCffssrrgg- set ease: pressed, row, column, color, function, step, round, group");
-                printfnl("Grrccgg          - set group: row, column, group");
-                printfnl("Kllrrcctta1a2a3  - set keymap layer, row, column, type, arg1-3");
-                printfnl("m                - clear all macro keys");
-                printfnl("Mnnstring        - set macro nn with string");
-                printfnl("n                - clear nkro");
-                printfnl("N                - set nkro");
-                printfnl("Pnnhhhssvv       - set palette: number, hue, saturation, value");
-                printfnl("Rllddtta1a2a3    - set rotary layer, direction, type, arg1-3");
-                printfnl("L                - load configuration from flash");
-                printfnl("S                - write configuration to flash");
-                printfnl("Z                - erase configuration flash");
+                printfnl("i                 - identify");
+                printfnl("dt                - dump type: [e]ase, [g]roup, [k]eymap, [r]otary, [p]alette");
+                printfnl("EpprrccCCffssrrgg - set ease: pressed, row, column, color, function, step, round, group");
+                printfnl("Grrccgg           - set group: row, column, group");
+                printfnl("Kllrrcctta1a2a3   - set keymap layer, row, column, type, arg1-3");
+                printfnl("m                 - clear all macro keys");
+                printfnl("Mnnstring         - set macro nn with string");
+                printfnl("n                 - clear nkro");
+                printfnl("N                 - set nkro");
+                printfnl("Pnnhhhhssvv       - set palette: number, hue, saturation, value");
+                printfnl("Rllddtta1a2a3     - set rotary layer, direction, type, arg1-3");
+                printfnl("L                 - load configuration from flash");
+                printfnl("S                 - write configuration to flash");
+                printfnl("Z                 - erase configuration flash");
                 break;
 
             case '\n':

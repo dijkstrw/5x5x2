@@ -62,7 +62,7 @@ typedef struct {
 
 typedef struct {
     event_t keymap[LAYERS_NUM][ROWS_NUM][COLS_NUM];
-    event_t rotary[LAYERS_NUM][ROTARY_DIRECTIONS];
+    event_t rotary[LAYERS_NUM][ROTARY_NUM];
     event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
     uint8_t macro_len[MACRO_MAXKEYS];
     hsv_t palette[PALETTE_NUM];
