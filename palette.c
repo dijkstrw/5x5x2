@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "elog.h"
 #include "palette.h"
 #include "serial.h"
 
@@ -68,5 +69,9 @@ palette_dump()
 void
 palette_set(uint8_t color, hsv_t hsv)
 {
+    if (color >= PALETTE_NUM) {
+        elog("palette color out of bounds");
+        return;
+    }
     palette[color % PALETTE_NUM] = hsv;
 }

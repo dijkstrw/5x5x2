@@ -10,7 +10,8 @@
 #include <libopencm3/cm3/scb.h>
 
 void hardfault_discovery(struct scb_exception_stack_frame *frame);
-void hardfault_discovery(struct scb_exception_stack_frame *frame)
+void
+hardfault_discovery(struct scb_exception_stack_frame *frame)
 {
     volatile uint32_t _CFSR;
     volatile uint32_t _HFSR;
@@ -57,7 +58,8 @@ void hardfault_discovery(struct scb_exception_stack_frame *frame)
 }
 
 __attribute__((naked)) void hardfault_handler(void);
-__attribute__((naked)) void hardfault_handler(void)
+__attribute__((naked)) void
+hardfault_handler(void)
 {
   __asm volatile (
     "movs r0,#4            \n"

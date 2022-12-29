@@ -33,6 +33,7 @@
 
 #include "clock.h"
 #include "config.h"
+#include "elog.h"
 #include "palette.h"
 #include "rgbease.h"
 #include "rotary.h"
@@ -210,7 +211,16 @@ rgbease_event(uint8_t row, uint8_t column, bool pressed)
 void
 rgbease_set(uint8_t pressed, uint8_t row, uint8_t column, rgbaction_t *a)
 {
-    rgbaction_t *e = &rgbaction[pressed % PRESSED_NUM][row % ROWS_NUM][column % COLS_NUM];
+    rgbaction_t *e;
+
+    if ((pressed >= PRESSED_NUM) ||
+        (row >= ROWS_NUM) ||
+        (column >= COLS_NUM)) {
+        elog("rgbease position out of bounds");
+        return;
+    }
+
+    e = &rgbaction[pressed][row][column];
 
     e->color = a->color;
     e->f = a->f;
@@ -402,5 +412,11 @@ rgbgroup_dump()
 void
 rgbgroup_set(uint8_t row, uint8_t column, uint8_t group)
 {
-    rgbgroup[row % ROWS_NUM][column % COLS_NUM] = group;
+    if ((row >= ROWS_NUM) ||
+        (column >= COLS_NUM)) {
+        elog("rgbgroup position out of bounds");
+        return;
+    }
+
+    rgbgroup[row][column] = group;
 }

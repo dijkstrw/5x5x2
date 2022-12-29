@@ -116,7 +116,7 @@ rotary_dump()
 void
 rotary_set(uint8_t l, uint8_t d, event_t *event)
 {
-    if ((l > LAYERS_NUM) ||
+    if ((l >= LAYERS_NUM) ||
         (d >= ROTARY_NONE)) {
         elog("rotary position out of bounds");
         return;

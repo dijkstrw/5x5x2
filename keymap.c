@@ -105,9 +105,9 @@ keymap_get(uint8_t l, uint8_t r, uint8_t c)
 void
 keymap_set(uint8_t l, uint8_t r, uint8_t c, event_t *event)
 {
-    if ((l > LAYERS_NUM) ||
-        (r > ROWS_NUM) ||
-        (c > COLS_NUM)) {
+    if ((l >= LAYERS_NUM) ||
+        (r >= ROWS_NUM) ||
+        (c >= COLS_NUM)) {
         elog("keymap position out of bounds");
         return;
     }
