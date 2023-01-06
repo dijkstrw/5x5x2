@@ -34,6 +34,8 @@
 #define CMD_FLASH_LOAD    'L'
 #define CMD_FLASH_SAVE    'S'
 #define CMD_IDENTIFY      'i'
+#define CMD_BACKCOLOR_SET 'B'
+#define CMD_COLOR_SET     'C'
 #define CMD_DUMP          'd'
 #define CMD_EASE_SET      'E'
 #define CMD_GROUP_SET     'G'

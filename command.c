@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2021-2023 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,42 @@ command_identify(void)
 
     for (i = 0; i < STRI_MAX; i++) {
         printfnl("%02x: %s", i, usb_strings[i]);
+    }
+}
+
+static void
+command_set_backcolor(struct ring *input_ring)
+{
+    hsv_t dummy = HSV_WHITE;
+    uint8_t n;
+    uint8_t red, green, blue;
+
+    for (n = RGB_BACKLIGHT_OFFSET; n++; n < RGB_ALL_NUM) {
+        rgbease_set_direct(n, dummy, F_NOP, 0, 0);
+        red = read_hex_8(input_ring);
+        green = read_hex_8(input_ring);
+        blue = read_hex_8(input_ring);
+        rgbpixel_set(n, red, green, blue);
+    }
+}
+
+static void
+command_set_color(struct ring *input_ring)
+{
+    hsv_t dummy = HSV_WHITE;
+    uint8_t r, c, n;
+    uint8_t red, green, blue;
+
+    for (r = 0; r < ROWS_NUM; r++) {
+        for (c = 0; c < COLS_NUM; c++) {
+            n = key2led(r, c);
+
+            rgbease_set_direct(n, dummy, F_NOP, 0, 0);
+            red = read_hex_8(input_ring);
+            green = read_hex_8(input_ring);
+            blue = read_hex_8(input_ring);
+            rgbpixel_set(n, red, green, blue);
+        }
     }
 }
 
@@ -211,6 +247,14 @@ command_process(struct ring *input_ring)
                 command_identify();
                 break;
 
+            case CMD_BACKCOLOR_SET:
+                command_set_backcolor(input_ring);
+                break;
+
+            case CMD_COLOR_SET:
+                command_set_color(input_ring);
+                break;
+
             case CMD_DUMP:
                 if (ring_read_ch(input_ring, &c) != -1) {
                     switch (c) {
@@ -279,6 +323,8 @@ command_process(struct ring *input_ring)
                 printfnl("commands:");
                 printfnl("i                 - identify");
                 printfnl("dt                - dump type: [e]ase, [g]roup, [k]eymap, [r]otary, [p]alette");
+                printfnl("B[rrggbb]*8       - set color rgb of bottom layer");
+                printfnl("C[rrggbb]*25      - set color rgb of top layer");
                 printfnl("EpprrccCCffssrrgg - set ease: pressed, row, column, color, function, step, round, group");
                 printfnl("Grrccgg           - set group: row, column, group");
                 printfnl("Kllrrcctta1a2a3   - set keymap layer, row, column, type, arg1-3");
