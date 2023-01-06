@@ -35,20 +35,20 @@ hsv_t palette[PALETTE_NUM] = {
 
     HSV_LIME,
     HSV_VERMILION,
-    
-    HSV_RED,
-    HSV_YELLOW,
-    HSV_BLIME,
-    HSV_AQUA,
-    HSV_BLUE,
-    HSV_FUCHSIA,
 
-    HSV_VERMILION,
     HSV_AMBER,
+
     HSV_CHARTREUSE,
-    HSV_GASHYANTA,
-    HSV_CAPRI,
+    HSV_YELLOW,
+    HSV_ROSE,
     HSV_VIOLET,
+    HSV_AZURE,
+
+    HSV_MAGENTA,
+    HSV_VOLTA,
+    HSV_CYAN,
+    HSV_SPRING,
+    HSV_CRIMSON,
 };
 
 void
@@ -58,7 +58,7 @@ palette_dump()
 
     printfnl("palette:");
     for (i = 0; i < PALETTE_NUM; i++) {
-        printfnl("hsv %01x: %04x,%02x,%02x ",
+        printfnl("hsv %02x: %04x,%02x,%02x",
                i,
                palette[i].h,
                palette[i].s,
@@ -73,5 +73,5 @@ palette_set(uint8_t color, hsv_t hsv)
         elog("palette color out of bounds");
         return;
     }
-    palette[color % PALETTE_NUM] = hsv;
+    palette[color] = hsv;
 }

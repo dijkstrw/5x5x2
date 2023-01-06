@@ -65,11 +65,11 @@ rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
             EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 1)
         },
         {
+            EASE(COLOR_6,          F_COLOR_HOLD, 0, 0, 1),
             EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 1),
             EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 1),
             EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_11,         F_COLOR_HOLD, 0, 0, 2)
+            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 2)
         },
         {
             EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
@@ -102,11 +102,11 @@ rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
             EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 2)
         },
         {
+            EASE(COLOR_6,          F_COLOR_HOLD, 0, 0, 0),
             EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 0),
             EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 0),
             EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_11,         F_COLOR_HOLD, 0, 0, 0)
+            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 0)
         },
         {
             EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
@@ -244,7 +244,7 @@ void
 rgbease_rainbow(uint8_t times)
 {
     uint8_t i;
-    hsv_t color = HSV(0, 0xff, 0xff);
+    hsv_t color = HSV_RED;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
         rgbease_set_direct(i, color, F_RAINBOW, 0, times);
@@ -298,7 +298,6 @@ void
 rgbease_advance() {
     uint8_t i;
     hsv_t color;
-    hsv_t color_backlight = HSV_ORANGE;
     uint8_t step;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
@@ -306,8 +305,7 @@ rgbease_advance() {
         switch (leds[i].f) {
             case F_NOP:
                 if (i > RGB_BACKLIGHT_OFFSET) {
-                    color = color_backlight;
-                    rgbease_set_direct(i, color, F_BACKLIGHT, 0 , 0);
+                    rgbease_set_direct(i, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
                 } else {
                     continue;
                 }

@@ -122,7 +122,7 @@
 #define RGB_ALL_NUM           (RGB_KEYS_NUM + RGB_BACKLIGHT_NUM)
 #define RGB_BACKLIGHT_OFFSET  RGB_KEYS_NUM
 
-#define PALETTE_NUM           16
+#define PALETTE_NUM           15
 
 /*
  * Rotary encoder
