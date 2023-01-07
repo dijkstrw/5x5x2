@@ -22,6 +22,17 @@ supports:
 
 The board is programmed using a 4-pin SWIO/SWCLK .1'' header.
 
+Default firmware / my usecase
+-----------------------------
+
+This is my macropad; first two rows select my current workspace in the
+windowmanager, and the 10 keys light together in that workspace color
+as a visual reminder where I am at.
+
+The rotary encoder is for volume control. Rotary press = mute/unmute.
+
+Third row of keys are media keys.
+
 Building
 ========
 
@@ -135,9 +146,8 @@ The available commands are:
 
 Command interpretation starts after receiving a newline.
 
-Color easing & rgb groups
--------------------------
-
+Color easing
+------------
 Key down (and up) events can be tied to an rgb easing function. This
 means that a keypress will result in a led slowly changing to a
 particular color.
@@ -165,11 +175,15 @@ color (0), towards black (1), off (2)). Group, finally, defines to
 what group this easing will be applied. This way multiple keys can
 light together if one key is pressed.
 
-Example functionality that is built in the default firmware: the first
-10 keys are one group, and pressing one of the 10 keys will color the
-entire group in the color of that key. The usecase here is that I use
-these keys to select a workspace, and the color provides a visual
-reminder of the last workspace selected.
+Palette
+-------
+
+Colors in easings are assiged using a color index in the
+palette. The default palette strives for a selection of colors that
+are visually distinct from another.
+
+The rotary action forward, backward and backlight colors have fixed
+indexes, and can be set by adjusting their assigned palette colors.
 
 Automouse
 ---------
