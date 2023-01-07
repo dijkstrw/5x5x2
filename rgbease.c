@@ -41,6 +41,7 @@
 
 static rgbease_t leds[RGB_ALL_NUM];
 static uint32_t rgbease_timer = 0;
+fract8_t rgbintensity;
 
 uint32_t rgbgroup[ROWS_NUM][COLS_NUM] =
 {
@@ -182,7 +183,7 @@ rgbease_dump()
         }
     }
 }
-    
+
 void
 rgbease_event(uint8_t row, uint8_t column, bool pressed)
 {
@@ -373,7 +374,7 @@ rgbease_advance() {
                 break;
 
             case F_BACKLIGHT:
-                color.v = scale8(color.v, 0x20);
+                color.v = scale8(color.v, rgbintensity);
                 break;
         }
 

@@ -59,6 +59,7 @@ typedef struct {
 
 extern uint32_t rgbgroup[ROWS_NUM][COLS_NUM];
 extern rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM];
+extern fract8_t rgbintensity;
 
 #define STEP_LAST             0xff
 #define STEP_RAINBOW          0x03

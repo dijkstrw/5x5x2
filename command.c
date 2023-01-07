@@ -86,7 +86,7 @@ command_set_backcolor(struct ring *input_ring)
     uint8_t n;
     uint8_t red, green, blue;
 
-    for (n = RGB_BACKLIGHT_OFFSET; n++; n < RGB_ALL_NUM) {
+    for (n = RGB_BACKLIGHT_OFFSET; n < RGB_ALL_NUM; n++) {
         rgbease_set_direct(n, dummy, F_NOP, 0, 0);
         red = read_hex_8(input_ring);
         green = read_hex_8(input_ring);
@@ -146,6 +146,16 @@ command_set_group(struct ring *input_ring)
 }
 
 static void
+command_set_intensity(struct ring *input_ring)
+{
+    uint8_t aintensity;
+
+    aintensity = read_hex_8(input_ring);
+
+    rgbintensity = (fract8_t)aintensity;
+}
+
+static void
 command_set_keymap(struct ring *input_ring)
 {
     uint8_t alayer, arow, acolumn;
@@ -191,6 +201,15 @@ command_set_macro(struct ring *input_ring)
     }
 
     elog("macro not closed of with eol");
+}
+
+static void
+command_set_nkro(struct ring *input_ring)
+{
+    uint8_t aenable = read_hex_8(input_ring);
+
+    nkro_active = (aenable & 1);
+    printfnl("nkro %d", nkro_active);
 }
 
 static void
@@ -265,7 +284,7 @@ command_process(struct ring *input_ring)
                         case DUMP_GROUP:
                             rgbgroup_dump();
                             break;
-                            
+
                         case DUMP_KEYMAP:
                             keymap_dump();
                             break;
@@ -273,7 +292,7 @@ command_process(struct ring *input_ring)
                         case DUMP_ROTARY:
                             rotary_dump();
                             break;
-                            
+
                         case DUMP_PALETTE:
                             palette_dump();
                             break;
@@ -289,6 +308,10 @@ command_process(struct ring *input_ring)
                 command_set_group(input_ring);
                 break;
 
+            case CMD_INTENSITY_SET:
+                command_set_intensity(input_ring);
+                break;
+
             case CMD_KEYMAP_SET:
                 command_set_keymap(input_ring);
                 break;
@@ -301,14 +324,8 @@ command_process(struct ring *input_ring)
                 command_set_macro(input_ring);
                 break;
 
-            case CMD_NKRO_CLEAR:
-                nkro_active = 0;
-                printfnl("nkro %d", nkro_active);
-                break;
-
             case CMD_NKRO_SET:
-                nkro_active = 1;
-                printfnl("nkro %d", nkro_active);
+                command_set_nkro(input_ring);
                 break;
 
             case CMD_PALETTE_SET:
@@ -327,6 +344,7 @@ command_process(struct ring *input_ring)
                 printfnl("C[rrggbb]*25      - set color rgb of top layer");
                 printfnl("EpprrccCCffssrrgg - set ease: pressed, row, column, color, function, step, round, group");
                 printfnl("Grrccgg           - set group: row, column, group");
+                printfnl("Iii               - set backlight / bottom layer intensity");
                 printfnl("Kllrrcctta1a2a3   - set keymap layer, row, column, type, arg1-3");
                 printfnl("m                 - clear all macro keys");
                 printfnl("Mnnstring         - set macro nn with string");

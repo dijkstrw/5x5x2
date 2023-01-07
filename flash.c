@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2022-2023 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,7 @@ typedef struct {
     rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM];
     uint32_t layer;
     uint32_t nkro_active;
+    uint32_t rgbintensity;
 } __attribute__ ((packed)) flashdata_t;
 
 typedef struct {
@@ -165,6 +166,7 @@ flash_read_config(void)
     memcpy(rgbaction, flash.data.rgbaction, sizeof(flash.data.rgbaction));
     layer = flash.data.layer;
     nkro_active = flash.data.nkro_active;
+    rgbintensity = flash.data.rgbintensity;
     cm_enable_interrupts();
 
     return 1;
@@ -175,17 +177,16 @@ flash_write_block(void *dest, const void *src, uint32_t len)
 {
     uint32_t i;
     uint32_t status;
-    uint32_t *d = dest;
-    const uint32_t *s = src;
+    uint32_t d = (uint32_t)dest;
+    const uint32_t *s = (uint32_t *)src;
 
-    if (((uint32_t)d < (uint32_t)&flash) ||
-        (((uint32_t)d + len) > ((uint32_t)&flash + sizeof(flash)))) {
+    if ((d < (uint32_t)&flash) ||
+        ((d + len) > ((uint32_t)&flash + sizeof(flash)))) {
         elog("write address address outside of user flash range");
         return 0;
     }
-
     for (i = 0; i < len; i += sizeof(uint32_t)) {
-        flash_program_word((uint32_t)d++, *s++);
+        flash_program_word(d++, *s++);
         status = flash_get_status_flags();
         if (status != FLASH_SR_EOP) {
             elog("error after write %d:%02x", i, status);
@@ -200,7 +201,6 @@ uint32_t
 flash_write_config(void)
 {
     uint32_t data;
-    uint32_t status;
     uint32_t crc;
 
     if (! flash_erase()) {
@@ -256,11 +256,16 @@ flash_write_config(void)
                            sizeof(data))) {
         return 0;
     }
+    data = (uint32_t)rgbintensity;
+    if (!flash_write_block(&flash.data.rgbintensity,
+                           &data,
+                           sizeof(data))) {
+        return 0;
+    }
     crc = flash_crc();
     if (!flash_write_block(&flash.crc.crc, &crc, sizeof(crc))) {
         return 0;
     }
-
     flash_lock();
     return 1;
 }
