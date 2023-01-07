@@ -18,6 +18,7 @@ supports:
 - programmable macro keys via serial
 - storing current configuration in "userflash"
 - sk68xx backlight leds
+- rotary encoder
 
 The board is programmed using a 4-pin SWIO/SWCLK .1'' header.
 
@@ -26,6 +27,10 @@ Building
 
     git submodule init
     git submodule update
+    cd docker
+    docker build -t stm32-gcc .
+    cd ..
+    ./docker/dev.sh
     make -C libopencm3
     make
 
@@ -63,35 +68,63 @@ buttons and a vertical and horizontal scrollwheel action.
 Serial
 ------
 
-The board exposes a serial port for logging, and
-configuration. Commands available are:
+The board exposes a serial port for logging and
+configuration. Configuration is done using commands, with these
+general rules:
 
-    ? - show a terse description of available commands.
+    - Commands with lowercase letters request configuration
+      information
 
-    i - show usb info strings; contains the git-describe tag of the
-        current firmware, so mission critical to some, useless to
-        everybody else.
+    - Commands with capital letters set configuration
 
-    d - dump the keymap(s).
+    - Arguments often are two hexadecimal digits long; e.g. 00, 12,
+      fa. If more digits are required, this is denoted in the argument
+      specification by a colon, like so <argument:4>.
 
-    K - redefine a key in the keymap, takes a hexadecimal argument of
-        the form <layer><row><column><type><arg1><arg2><arg3>, with each
-        argument being 2 digits long.
+The available commands are:
 
-    m - clear all macro keys.
+    ?  - show a terse description of available commands.
 
-    M - define one macro key, takes an argument of the form
-        <number><oftenusedstring>. The number is a two hexdigits, the
-        string can be upto 32 7-bit ascii chars long and is terminated
-        with a newline.
+    i  - show usb info strings; contains the git-describe tag of the
+         current firmware, so mission critical to some, useless to
+         everybody else.
 
-    n - set keyboard mode to bios (default).
+    de - dump the rgb ease functions per key
+    dg - dump the rgb group per key
+    dk - dump the keymap
+    dp - dump the palette
+    dr - dump the rotary configuration
 
-    N - set keyboard mode to nkro.
+    B  - set the bottom set of 8 leds (backlight) to custom rgb values.
+         Takes a RGB argument of the form <rgb:6> times 8 for all leds.
 
-    R - redefine the rotary command, takes a hexadecimal argument of
-        the form <layer><direction><type><arg1><arg2><arg3>, with each
-        argument being 2 digits long.
+    C  - set the top set of 25 leds (frontlight) to custom rgb values.
+         Takes a RGB argument of the form <rgb:6> times 25 for all leds.
+
+    E  - define an rgbease function for a key; takes arguments <pressed>
+         <row><column><color><function><step><round><group>.
+
+    G  - assign a particular key to a RGB group. Takes the arguments
+         <row><column><group>.
+
+    K  - redefine a key in the keymap, takes argument of the form
+         <layer><row><column><type><arg1><arg2><arg3>.
+
+    A  - clear all macro keys.
+
+    M  - define one macro key, takes an argument of the form
+         <number><oftenusedstring>. The number is a two hexdigits, the
+         string can be upto 32 7-bit ascii chars long and is terminated
+         with a newline.
+
+    N  - set keyboard mode to <argument>; 00 for bios and 01 for nkro.
+         Default is bios.
+
+    P  - set palette color, takes arguments
+         <number><hue:4><saturation><value>
+
+    R - redefine the rotary command, takes a argument of
+        the form <layer><direction><type><arg1><arg2><arg3>.
 
     L - load configuration from flash
 
@@ -101,6 +134,42 @@ configuration. Commands available are:
         next powerup.
 
 Command interpretation starts after receiving a newline.
+
+Color easing & rgb groups
+-------------------------
+
+Key down (and up) events can be tied to an rgb easing function. This
+means that a keypress will result in a led slowly changing to a
+particular color.
+
+The easing functions defined are:
+
+    - COLOR_FLASH : ease up towards a color in <step> increments, and
+    then fade away.
+
+    - COLOR_HOLD  : ease towards a color in <step> increments and hold.
+
+    - DIM         : ease away in <step>s from color, end in off.
+
+    - BRIGHTEN    : ease towards color in <step>s, end in off.
+
+    - RAINBOW     : use on <round> to walk all hues, set <round> to
+    number of times to repeat.
+
+    - BACKLIGHT   : use backlight color at backlight intensity.
+
+An easing definition includes step, round and group. Step is used to
+count where we are in the easing, or in what pace the ease is
+run. Round is used when an easing has multiple rounds (flash = towards
+color (0), towards black (1), off (2)). Group, finally, defines to
+what group this easing will be applied. This way multiple keys can
+light together if one key is pressed.
+
+Example functionality that is built in the default firmware: the first
+10 keys are one group, and pressing one of the 10 keys will color the
+entire group in the color of that key. The usecase here is that I use
+these keys to select a workspace, and the color provides a visual
+reminder of the last workspace selected.
 
 Automouse
 ---------
@@ -131,3 +200,4 @@ Notes:
 - This particular example defines the macro for macro key number 1.
 - You need to have a macro key 1 in your keymap, otherwise you have
   nothing to trigger the macro.
+- There is intentionally no way to display stored macros.
