@@ -158,6 +158,7 @@ void
 rgbease_init()
 {
     memset(&leds, 0, sizeof(leds));
+    rgbintensity = RGB_BACKLIGHT_INTENS;
 }
 
 void
@@ -376,6 +377,9 @@ rgbease_advance() {
             case F_BACKLIGHT:
                 color.v = scale8(color.v, rgbintensity);
                 break;
+
+            case F_OVERRIDE:
+                continue;
         }
 
         hsv2rgb(&color, &frame[i]);

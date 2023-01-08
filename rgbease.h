@@ -37,6 +37,7 @@ enum {
     F_DIM,
     F_RAINBOW,
     F_BACKLIGHT,
+    F_OVERRIDE
 };
 
 typedef uint8_t fract8_t;

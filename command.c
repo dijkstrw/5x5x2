@@ -87,7 +87,7 @@ command_set_backcolor(struct ring *input_ring)
     uint8_t red, green, blue;
 
     for (n = RGB_BACKLIGHT_OFFSET; n < RGB_ALL_NUM; n++) {
-        rgbease_set_direct(n, dummy, F_NOP, 0, 0);
+        rgbease_set_direct(n, dummy, F_OVERRIDE, 0, 0);
         red = read_hex_8(input_ring);
         green = read_hex_8(input_ring);
         blue = read_hex_8(input_ring);
@@ -106,7 +106,7 @@ command_set_color(struct ring *input_ring)
         for (c = 0; c < COLS_NUM; c++) {
             n = key2led(r, c);
 
-            rgbease_set_direct(n, dummy, F_NOP, 0, 0);
+            rgbease_set_direct(n, dummy, F_OVERRIDE, 0, 0);
             red = read_hex_8(input_ring);
             green = read_hex_8(input_ring);
             blue = read_hex_8(input_ring);
