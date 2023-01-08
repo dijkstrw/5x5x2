@@ -23,25 +23,23 @@ include $(OPENCM3_DIR)/mk/gcc-config.mk
 
 GDB              = arm-none-eabi-gdb-py
 
-all: $(BINARY).elf
+all: $(BINARY).elf $(BINARY).bin
 
 .PHONY: all clean
 
 clean:
 	$(Q)$(RM) -rf $(BINARY).elf $(BINARY).bin $(BINARY).list $(BINARY).map *.o *.d generated.*
 
-flash: flash_stlink
-
 size: $(BINARY).elf
 	$(Q)./checksize $(LDSCRIPT) $(BINARY).elf
 
-flash_stlink: $(BINARY).bin
+flash: $(BINARY).bin
 	st-flash write $(BINARY).bin 0x8000000
 
-.gdb_config_bmp:
+.gdb_config:
 	echo > .gdb_config "file $(BINARY).elf\ntarget extended-remote $(BMP_HOST):$(BMP_PORT)\nmonitor version\nmonitor swdp_scan\nattach 1\nbreak main\nset mem inaccessible-by-default off\nsource gdb-regview/gdb-regview.py\nregview load gdb-regview/defs/STM32F10X_CL.xml\n"
 
-debug: .gdb_config_bmp $(BINARY).elf
+debug: .gdb_config $(BINARY).elf
 	$(GDB) --command=.gdb_config
 
 include $(OPENCM3_DIR)/mk/genlink-rules.mk
