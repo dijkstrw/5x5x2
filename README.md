@@ -12,7 +12,7 @@ supports:
 - usb keyboard scancodes
 - bios boot and nkro
 - system / consumer codes
-- generation of mouse events
+- generation of normal mouse events
 - usb serial interface
 - an automouse mode for fast-clicking
 - programmable macro keys via serial

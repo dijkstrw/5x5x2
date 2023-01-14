@@ -118,48 +118,41 @@ keymap_set(uint8_t l, uint8_t r, uint8_t c, event_t *event)
 void
 keymap_event(uint16_t row, uint16_t col, bool pressed)
 {
-    event_t *event = &keymap[layer][row][col];
+    event_t *event = layer_get_event(row, col, pressed);
 
     rgbease_event(row, col, pressed);
 
     switch (event->type) {
         case KMT_KEY:
             keyboard_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_MOUSE:
             mouse_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_AUTOMOUSE:
             automouse_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_WHEEL:
             wheel_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_CONSUMER:
             extrakey_consumer_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_SYSTEM:
             extrakey_system_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
 
         case KMT_LAYER:
-            layer_event(event, pressed);
+            layer_event(row, col, event, pressed);
             break;
 
         case KMT_MACRO:
             macro_event(event, pressed);
-            layer_use_event(event, pressed);
             break;
     }
 }

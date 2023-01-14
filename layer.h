@@ -32,16 +32,16 @@
 #include "keymap.h"
 
 enum {
-	LAYER_MOVE = 1,
+    LAYER_MOVE = 1,
     LAYER_UP,
     LAYER_DOWN,
-	LAYER_NEXTKEY,
-	LAYER_HOLD,
+    LAYER_NEXTKEY,
+    LAYER_HOLD,
 };
 
 extern uint8_t layer;
 
-void layer_use_event(event_t *event, bool pressed);
-void layer_event(event_t *event, bool pressed);
+event_t *layer_get_event(uint16_t row, uint16_t col, bool pressed);
+void layer_event(uint16_t row, uint16_t col, event_t *event, bool pressed);
 
 #endif /* _LAYER_H */

@@ -39,41 +39,87 @@
 #include "config.h"
 #include "elog.h"
 #include "layer.h"
+#include "rgbease.h"
 
 uint8_t layer = 0;
 
-static uint8_t layer_active = 0;
-static uint8_t layer_nextkey = 0;
-static uint8_t layer_previous = 0;
+typedef struct {
+    uint16_t row;
+    uint16_t col;
+    uint8_t previous;
+    uint8_t active;
+    uint8_t nextkey;
+} __attribute__ ((packed)) layer_context_t;
+
+static layer_context_t context = {0, 0, 0, 0, 0};
 
 static void
 layer_advance(uint8_t next)
 {
-    layer_previous = layer;
+    context.previous = layer;
     layer = next % LAYERS_NUM;
+    rgbease_layer(layer);
+    elog("layer %02x active", layer);
 }
 
 static void
 layer_return()
 {
-    layer = layer_previous;
+    layer = context.previous;
+    rgbease_layer(layer);
+    elog("layer %02x active", layer);
+}
+
+event_t *
+layer_get_event(uint16_t row, uint16_t col, bool pressed)
+{
+    event_t *result = &keymap[layer][row][col];
+
+    if ((! pressed) &&
+        context.active)
+    {
+        if ((context.row == row) &&
+            (context.col == col)) {
+            /*
+             * At keydown we can change to a new layer; so considering at
+             * keyup only; are we executing some kind of layer action? If so,
+             * take the layer event structure from the previous layer as our
+             * event
+             */
+            elog("previous layer keyup detected");
+            result = &keymap[context.previous][row][col];
+        } else if (context.nextkey) {
+            /*
+             * If we are only in the layer for the nextkey, then
+             * return to the previous layer after that key was seen.
+             */
+            context.nextkey = false;
+            context.active = false;
+            layer_return();
+        }
+    }
+
+    return result;
 }
 
 void
-layer_event(event_t *event, bool pressed)
+layer_event(uint16_t row, uint16_t col, event_t *event, bool pressed)
 {
-	uint8_t action = event->layer.action;
-	uint8_t number = event->layer.number;
+    uint8_t action = event->layer.action;
+    uint8_t number = event->layer.number;
 
     elog("layer %02x %02x %d", event->layer.action, event->layer.number, pressed);
 
-    if (layer_active) {
-        elog("ignoring layer event: already active");
-        return;
-    }
-
     if (pressed) {
-        layer_active = 1;
+        if (context.active) {
+            elog("ignoring layer event: already active");
+            return;
+        } else {
+            context.active = true;
+            context.row = row;
+            context.col = col;
+        }
+
         switch (action) {
             case LAYER_MOVE:
                 layer_advance(number);
@@ -85,40 +131,35 @@ layer_event(event_t *event, bool pressed)
                 layer_advance(layer - 1);
                 break;
             case LAYER_NEXTKEY:
-                layer_active = 0;
+                context.nextkey = true;
+                layer_advance(number);
                 break;
             case LAYER_HOLD:
                 layer_advance(number);
                 break;
         }
     } else {
+        if (context.active &&
+            ((context.row != row) ||
+             (context.col != col))) {
+            elog("ignoring layer event: already active");
+            return;
+        }
+
         switch (action) {
             case LAYER_MOVE:
             case LAYER_UP:
             case LAYER_DOWN:
-                layer_active = 0;
+                context.active = false;
                 break;
 
             case LAYER_NEXTKEY:
-                layer_advance(number);
-                layer_nextkey = 1;
-                layer_active = 1;
                 break;
 
             case LAYER_HOLD:
                 layer_return();
-                layer_active = 0;
+                context.active = false;
                 break;
         }
-    }
-}
-
-void
-layer_use_event(event_t *event, bool pressed)
-{
-    if ((! pressed) && layer_nextkey) {
-        layer_nextkey = 0;
-        layer_active = 0;
-        layer_return();
     }
 }

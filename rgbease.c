@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2022-2023 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -293,6 +293,17 @@ rgbease_rotate(uint8_t direction)
             rgbease_set_direct(offset, color, F_COLOR_FLASH, 0, 0);
             return;
         }
+    }
+}
+
+void
+rgbease_layer(uint8_t layer)
+{
+    uint8_t i;
+    hsv_t color = palette[COLOR_1 + layer];
+
+    for (i = RGB_BACKLIGHT_OFFSET; i < RGB_ALL_NUM; i++) {
+        rgbease_set_direct(i, color, F_COLOR_FLASH, 0, 0);
     }
 }
 
