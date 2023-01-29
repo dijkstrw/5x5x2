@@ -51,18 +51,25 @@
 event_t keymap[LAYERS_NUM][ROWS_NUM][COLS_NUM] =
 {
     {
-        { _K(F13), _K(F14), _K(F15), _K(F16), _K(F17) },
-        { _K(F18), _K(F19), _K(F20), _K(F21), _K(F22) },
-        { _C(VOLUMEINC), _C(VOLUMEDEC), _C(PLAY), _C(FASTFORWARD), _C(MUTE) },
-        { _K(PAD_1), _K(PAD_2), _K(PAD_3), _K(PAD_4), _K(PAD_5) },
-        { _L(NEXTKEY, 1), _K(PAD_7), _AM(MOUSE_BUTTON1, 20, 1), _K(PAD_9), _MA(0) }
+        { _K(F13), _K(F14), _K(F15), _K(F16), _K(MUTE) },
+        { _K(F17), _K(F18), _K(F19), _K(F20), _K(F21) },
+        { _KM(RCTRL, LEFT), _K(LEFT), _C(PLAY), _K(RIGHT), _KM(RCTRL, RIGHT) },
+        { _K(APP), _K(INTER2), _K(INTER4), _K(INTER5), _K(LANG1) },
+        { _L(MOVE, 1), _L(NEXTKEY, 2), _K(F22), _K(F23), _MA(0) }
     },
     {
-        { _K(INTER1), _K(INTER2), _K(INTER3), _K(INTER4), _K(INTER5) },
-        { _K(INTER6), _K(INTER7), _K(INTER8), _K(INTER9), _K(LANG1) },
-        { _K(LANG1), _K(LANG2), _K(LANG3), _K(LANG4), _K(LANG5) },
-        { _K(PAD_A), _K(PAD_B), _K(PAD_C), _K(PAD_D), _K(PAD_E) },
-        { _MA(1), _MA(2), _MA(3), _MA(4), _MA(5) },
+        { _K(PAD_MINUS), _K(NUM_LOCK), _K(PAD_SLASH), _K(PAD_ASTERISK), _K(MUTE) },
+        { _C(AL_FILEBROWSER), _K(PAD_7), _K(PAD_8), _K(PAD_9), _K(PAD_PLUS) },
+        { _C(AL_INTERNETBROWSER), _K(PAD_4), _K(PAD_5), _K(PAD_6), _K(PAD_PLUS) },
+        { _C(AL_EMAILREADER), _K(PAD_1), _K(PAD_2), _K(PAD_3), _K(PAD_ENTER) },
+        { _L(MOVE, 2), _K(PAD_0), _K(PAD_0), _K(PAD_PERIOD), _K(PAD_ENTER) },
+    },
+    {
+        { _MA(1), _MA(2), _MA(3), _MA(4), _K(MUTE) },
+        { _MA(5), _MA(6), _MA(7), _MA(8), _MA(9) },
+        { _AM(MOUSE_BUTTON1, 20, 1), _AM(0, 1, 5),  _C(VOLUMEINC), _C(VOLUMEDEC), _C(AC_BOOKMARKS) },
+        { _C(AL_CALCULATOR), _C(AL_TERMINALLOCK), _C(EJECT), _C(SCANNEXTTRACK), _C(SCANPREVIOUSTRACK) },
+        { _L(MOVE, 0), _C(AL_CHAT), _K(LANG2), _K(LANG3), _K(LANG4) },
     },
 };
 

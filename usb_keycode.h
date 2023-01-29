@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2015-2023 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,8 @@
  *
  * Refer to
  * linux: source/drivers/hid/hid-input.c
- * usb hid usage tables v 1.12
+ * https://usb.org/sites/default/files/hut1_2.pdf
+ * https://usb.org/sites/default/files/hut1_3_0.pdf
  */
 enum hid_keyboard_keypad_usage {
     EVENT_NONE = 0,
@@ -151,7 +152,7 @@ enum hid_keyboard_keypad_usage {
     KEY_PAD_PERIOD,
     KEY_ISO_SLASH,
     KEY_APP,
-    EVENT_STATUS,
+    KEY_POWER,
     KEY_PAD_EQUAL,
     KEY_F13,
     KEY_F14,
@@ -306,9 +307,36 @@ enum hid_system_usage {
     SYSTEM_DPADDOWN,
     SYSTEM_DPADRIGHT,
     SYSTEM_DPADLEFT,
+
+    SYSTEM_SETUP = 0x00A2,
+    SYSTEM_BREAK,
+    SYSTEM_DEBUGGER_BREAK,
+    SYSTEM_APPLICATION_BREAK,
+    SYSTEM_APPLICATION_DEBUGGER_BREAK,
+    SYSTEM_SPEAKER_MUTE,
+    SYSTEM_HIBERNATE,
+    SYSTEM_MICROPHONE_MUTE,
+
+    /* 0xaa - 0xaf = Reserved */
+
+    SYSTEM_DISPLAY_INVERT = 0x00B0,
+    SYSTEM_DISPLAY_INTERNAL,
+    SYSTEM_DISPLAY_EXTERNAL,
+    SYSTEM_DISPLAY_BOTH,
+    SYSTEM_DISPLAY_DUAL,
+    SYSTEM_DISPLAY_TOGGLE_INT_EXT_MODE,
+    SYSTEM_DISPLAY_SWAP_PRIMARY_SECONDARY,
+    SYSTEM_DISPLAY_TOGGLE_LCD_AUTOSCALE,
 };
 
 enum hid_consumer_usage {
+
+    CONSUMER_CONTROL = 0x01,
+    CONSUMER_NUMERICKEYPAD,
+    CONSUMER_PROGRAMMABLEBUTTONS,
+    CONSUMER_MICROPHONE,
+    CONSUMER_HEADPHONE,
+    CONSUMER_GRAPHICEQUALIZER,
 
     CONSUMER_POWER = 0x30,
     CONSUMER_RESET,
@@ -339,6 +367,12 @@ enum hid_consumer_usage {
     CONSUMER_BROADCASTMODE,
     CONSUMER_SNAPSHOT,
     CONSUMER_STILL,
+    CONSUMER_PIP_TOGGLE,
+    CONSUMER_PIP_SWAP,
+    CONSUMER_RED_BUTTON,
+    CONSUMER_GREEN_BUTTON,
+    CONSUMER_YELLOW_BUTTON,
+    CONSUMER_BLUE_BUTTON,
 
     /* 0x67 - 0x7f = Reserved */
 
@@ -519,7 +553,10 @@ enum hid_consumer_usage {
     CONSUMER_AC_SAVE,
     CONSUMER_AC_PRINT,
     CONSUMER_AC_PROPERTIES,
-    CONSUMER_AC_UNDO,
+
+    /* 0x20a - 0x219 = Reserved */
+
+    CONSUMER_AC_UNDO = 0x21a,
     CONSUMER_AC_COPY,
     CONSUMER_AC_CUT,
     CONSUMER_AC_PASTE,
