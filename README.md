@@ -1,49 +1,48 @@
 5x5x2 aka Orochi!
 =================
 
-This is my second custom keyboard, a 5x5 cherry mx matrix based on the STM32F1
-with libopencm3. The project contains firmware, schematics and a board layout
-in kicad.
+This is a 5x5 Cherry mx matrix with hotswap Kailh sockets based my own
+firmware for the STM32F1 with libopencm3. The project contains
+firmware, schematics and a board layout in kicad.
 
-![Board Front Picture](schematic/pictures/front.jpg)
 
-This project is intended as a platform for custom keyboard development. It
-supports:
-- usb keyboard scancodes
-- bios boot and nkro
-- system / consumer codes
-- generation of normal mouse events
-- usb serial interface
-- an automouse mode for fast-clicking
-- programmable macro keys via serial
-- storing current configuration in "userflash"
-- sk68xx backlight leds
+![Board Front Picture](docs/images/top-view.png)
+
+Features you expect given the above picture:
+- bios boot and nkro keyboards, using usb keyboard scancodes
+- system and consumer codes
+- mouse events
+- usb serial interface for configuration
+- 8 sk68xx background leds on the bottom board
+- 25 sk68xx underglow leds on the top board
 - rotary encoder
 
-The board is programmed using a 4-pin SWIO/SWCLK .1'' header.
+Advanced features:
+- adjustable speed macrokeys to e.g. emit passwords
+- all leds individually addressable, colorchord support
+- leds can be assigned to groups
+- a number of different ease functions to light led groups at keypresses
+- configuration can be adjusted and flashed in userflash
+- and an automouse that can simulate fast clicking
+
+More pictures of the board and the development dongle are
+[here](docs/IMAGES.md). If you want to build this yourself see
+[building](docs/BUILDING.md). Interactive bom is
+[here](https://glcdn.githack.com/dijkstrw/5x5x2/-/raw/30abe2597a5d5bfca67bad37a444652a956d1f03/schematic/bom/ibom.html).
 
 Default firmware / my usecase
 -----------------------------
 
-This is my macropad; first two rows select my current workspace in the
-windowmanager, and the 10 keys light together in that workspace color
-as a visual reminder where I am at.
+This is my macropad; it contains three layers:
 
-The rotary encoder is for volume control. Rotary press = mute/unmute.
+- X workspace layer, select workspace number, move about in VLC, start
+  apps, compose key, quick jump to password layer and a number of app
+  starting keys. Rotary dial controls system volume. Rotary press
+  mutes/unmutes.
 
-Third row of keys are media keys.
+- numeric keypad, for when tkl is not enough
 
-Building
-========
-
-    git submodule init
-    git submodule update
-    cd docker
-    docker build -t stm32-gcc .
-    cd ..
-    ./docker/dev.sh
-    make -C libopencm3
-    make
+- macrokeys layer
 
 Features
 ========
@@ -83,21 +82,20 @@ The board exposes a serial port for logging and
 configuration. Configuration is done using commands, with these
 general rules:
 
-    - Commands with lowercase letters request configuration
-      information
+- Commands with lowercase letters request configuration information
 
-    - Commands with capital letters set configuration
+- Commands with capital letters set configuration
 
-    - Arguments often are two hexadecimal digits long; e.g. 00, 12,
-      fa. If more digits are required, this is denoted in the argument
-      specification by a colon, like so <argument:4>.
+- Arguments often are two hexadecimal digits long; e.g. ``00``,
+  ``12``, ``fa``. If more digits are required, this is denoted in the
+  argument specification by a colon, like so ``<argument:4>``.
 
 The available commands are:
 
     ?  - show a terse description of available commands.
 
     i  - show usb info strings; contains the git-describe tag of the
-         current firmware, so mission critical to some, useless to
+         current firmware, so mission critical to me, useless to
          everybody else.
 
     de - dump the rgb ease functions per key
@@ -134,15 +132,15 @@ The available commands are:
     P  - set palette color, takes arguments
          <number><hue:4><saturation><value>
 
-    R - redefine the rotary command, takes a argument of
-        the form <layer><direction><type><arg1><arg2><arg3>.
+    R  - redefine the rotary command, takes a argument of
+         the form <layer><direction><type><arg1><arg2><arg3>.
 
-    L - load configuration from flash
+    L  - load configuration from flash
 
-    S - save configuration to flash
+    S  - save configuration to flash
 
-    Z - clear the configration flash, revert to "factory" keymap at
-        next powerup.
+    Z  - clear the configration flash, revert to "factory" keymap at
+         next powerup.
 
 Command interpretation starts after receiving a newline.
 
@@ -152,10 +150,13 @@ Key down (and up) events can be tied to an rgb easing function. This
 means that a keypress will result in a led slowly changing to a
 particular color.
 
-The easing functions defined are:
+The easing functions are updated every 1ms and keep track of where
+they are using ``round`` (e.g. going toward a color, going away from a
+color) and ``step`` (e.g. step 10 in the move to that color). The
+functions supported are:
 
     - COLOR_FLASH : ease up towards a color in <step> increments, and
-    then fade away.
+                    then fade away.
 
     - COLOR_HOLD  : ease towards a color in <step> increments and hold.
 
@@ -164,23 +165,19 @@ The easing functions defined are:
     - BRIGHTEN    : ease towards color in <step>s, end in off.
 
     - RAINBOW     : use on <round> to walk all hues, set <round> to
-    number of times to repeat.
+                    number of times to repeat.
 
     - BACKLIGHT   : use backlight color at backlight intensity.
 
-An easing definition includes step, round and group. Step is used to
-count where we are in the easing, or in what pace the ease is
-run. Round is used when an easing has multiple rounds (flash = towards
-color (0), towards black (1), off (2)). Group, finally, defines to
-what group this easing will be applied. This way multiple keys can
-light together if one key is pressed.
+While configuring this you can also set the group. This way multiple
+keys can light together if one key is pressed.
 
 Palette
 -------
 
-Colors in easings are assiged using a color index in the
-palette. The default palette strives for a selection of colors that
-are visually distinct from another.
+Colors in easings are assigned using a color index in the palette. The
+default palette strives for a selection of colors that are visually
+distinct from another.
 
 The rotary action forward, backward and backlight colors have fixed
 indexes, and can be set by adjusting their assigned palette colors.

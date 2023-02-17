@@ -50,7 +50,7 @@
   (fp_arc (start -1.8 -1.55) (mid -1.1 -2.225392) (end -0.4 -1.55) (layer "Edge.Cuts") (width 0.12) (tstamp eccb2211-aae4-487d-ac75-27d71eab9b36))
   (pad "1" smd rect (at 2.75 -0.7) (size 1.7 1) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 05422629-c20a-4582-bf8d-8a3a85ff6ffc))
   (pad "2" smd rect (at 2.75 0.7) (size 1.7 1) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp f3f43b80-c430-4b92-a3e4-adc16eb427ba))
-  (pad "3" smd rect (at -2.75 0.7) (size 1.7 1) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 9c8758c7-1a3d-4c6b-a1b8-949615a56699))
+  (pad "3" smd roundrect (at -2.75 0.7) (size 1.7 1) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25) (tstamp 9c8758c7-1a3d-4c6b-a1b8-949615a56699))
   (pad "4" smd rect (at -2.75 -0.7) (size 1.7 1) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 4f5ab9aa-79b1-46ef-8d7c-db83b213df62))
   (model "/Users/foostan/src/github.com/foostan/kbd/kicad-packages3D/YS-SK6812MINI-E.step"
     (offset (xyz 0 0 0.15))
