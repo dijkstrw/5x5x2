@@ -203,6 +203,8 @@ Setting macros via the shell is easy:
 
     echo -e "\nM01Nevergonnagiveyouup!\n" > /dev/ttyACM0
 
+Or see [set_macro.sh](util/set_macro.sh).
+
 Notes:
 
 - The initial newline is a trick to make sure our M will be considered
