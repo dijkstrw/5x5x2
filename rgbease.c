@@ -317,7 +317,7 @@ rgbease_advance() {
         color = leds[i].target;
         switch (leds[i].f) {
             case F_NOP:
-                if (i > RGB_BACKLIGHT_OFFSET) {
+                if (i >= RGB_BACKLIGHT_OFFSET) {
                     rgbease_set_direct(i, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
                 } else {
                     continue;
