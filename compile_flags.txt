@@ -1,0 +1,4 @@
+-I/home/dijkstra/project/5x5x2/libopencm3/include
+-DSTM32F1
+-DSTM32F103C8T6
+-m32
