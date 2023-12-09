@@ -66,6 +66,13 @@ palette_dump()
     }
 }
 
+hsv_t
+palette_get(uint8_t color)
+{
+    color = color % PALETTE_NUM;
+    return palette[color];
+}
+
 void
 palette_set(uint8_t color, hsv_t hsv)
 {

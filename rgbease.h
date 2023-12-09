@@ -58,8 +58,6 @@ typedef struct {
 } rgbaction_t;
 
 
-extern uint32_t rgbgroup[ROWS_NUM][COLS_NUM];
-extern rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM];
 extern fract8_t rgbintensity;
 
 #define STEP_LAST             0xff
@@ -77,15 +75,11 @@ extern fract8_t rgbintensity;
 void rgbease_init(void);
 void rgbease_advance(void);
 void rgbease_dim_all(void);
-void rgbease_dump(void);
 void rgbease_event(uint8_t row, uint8_t column, bool pressed);
 void rgbease_layer(uint8_t layer);
 void rgbease_process(void);
 void rgbease_rainbow(uint8_t times);
 void rgbease_rotate(uint8_t direction);
-void rgbease_set(uint8_t pressed, uint8_t row, uint8_t column, rgbaction_t *action);
-void rgbease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
+void rgbease_set(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round);
 
-void rgbgroup_dump(void);
-void rgbgroup_set(uint8_t row, uint8_t column, uint8_t group);
-#endif
+#endif /* _RGBEASE_H */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 by Willem Dijkstra <wpd@xs4all.nl>.
+ * Copyright (c) 2015-2023 by Willem Dijkstra <wpd@xs4all.nl>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,8 +37,7 @@
 #define CMD_BACKCOLOR_SET 'B'
 #define CMD_COLOR_SET     'C'
 #define CMD_DUMP          'd'
-#define CMD_EASE_SET      'E'
-#define CMD_GROUP_SET     'G'
+#define CMD_DISPLAY_SET   'D'
 #define CMD_INTENSITY_SET 'I'
 #define CMD_KEYMAP_SET    'K'
 #define CMD_MACRO_CLEAR   'A'
@@ -47,8 +46,6 @@
 #define CMD_PALETTE_SET   'P'
 #define CMD_ROTARY_SET    'R'
 
-#define DUMP_EASE         'e'
-#define DUMP_GROUP        'g'
 #define DUMP_KEYMAP       'k'
 #define DUMP_ROTARY       'r'
 #define DUMP_PALETTE      'p'

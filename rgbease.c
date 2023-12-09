@@ -26,7 +26,37 @@
  */
 
 /*
- * Light adjustments over time
+ * rgb easing (adjustments over time) functions
+ *
+ * When an event happens, we want to slowly move towards a color event
+ * on the keyboard. This module implements the slowly moving towards a
+ * color.
+ *
+ * The easing functions are updated every 1ms and keep track of where
+ * they are using ``round`` (e.g. going toward a color, going away from a
+ * color) and ``step`` (e.g. step 10 in the move to that color). The
+ * functions supported are:
+ *
+ *   - NOP         : no operation, except if the led is part of the backlight
+ *                   (2nd layer) leds, then adjust to backlight. Note
+ *                   that all functions below that terminate end up as
+ *                   NOP after termination.
+ *
+ *   - COLOR_FLASH : ease up towards a color in <step> increments, and
+ *                   then fade away.
+ *
+ *   - COLOR_HOLD  : ease towards a color in <step> increments and hold.
+ *
+ *   - DIM         : ease away in <step>s from color, end in off.
+ *
+ *   - BRIGHTEN    : ease towards color in <step>s, end in off.
+ *
+ *   - RAINBOW     : use on <round> to walk all hues, set <round> to
+ *                   number of times to repeat.
+ *
+ *   - BACKLIGHT   : use backlight color at backlight intensity.
+ *
+ *   - OVERRIDE    : do not ease this led
  */
 
 #include <string.h>
@@ -42,96 +72,6 @@
 static rgbease_t leds[RGB_ALL_NUM];
 static uint32_t rgbease_timer = 0;
 fract8_t rgbintensity;
-
-uint32_t rgbgroup[ROWS_NUM][COLS_NUM] =
-{
-    { 1,  1,  1,  1,  2 },
-    { 1,  1,  1,  1,  1 },
-    { 2,  2,  2,  2,  2 },
-    { 3,  3,  3,  3,  3 },
-    { 3,  3,  3,  3,  3 },
-};
-
-/*
- * Actions are stored per key release and press event
- */
-rgbaction_t rgbaction[PRESSED_NUM][ROWS_NUM][COLS_NUM] =
-{
-    {
-        {
-            EASE(COLOR_1,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_2,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_3,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_4,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 1)
-        },
-        {
-            EASE(COLOR_6,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 1),
-            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 2)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-    },
-    {
-        {
-            EASE(COLOR_1,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_2,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_3,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_4,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_5,          F_COLOR_HOLD, 0, 0, 2)
-        },
-        {
-            EASE(COLOR_6,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_7,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_8,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_9,          F_COLOR_HOLD, 0, 0, 0),
-            EASE(COLOR_10,         F_COLOR_HOLD, 0, 0, 0)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-        {
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0),
-            EASE(COLOR_OFF,        F_NOP,        0, 0, 0)
-        },
-    }
-};
 
 static uint8_t
 scale8(uint8_t i, fract8_t scale)
@@ -162,77 +102,7 @@ rgbease_init()
 }
 
 void
-rgbease_dump()
-{
-    uint8_t p, r, c;
-    rgbaction_t *a;
-
-    for (p = 0; p < PRESSED_NUM; p++) {
-        printfnl("pressed %02x", p);
-        for (r = 0; r < ROWS_NUM; r++) {
-            printf("row %02x: ", r);
-            for (c = 0; c < COLS_NUM; c++) {
-                a = &rgbaction[p][r][c];
-                printf("%01x,%02x,%02x,%02x,%02x ",
-                       a->color,
-                       a->f,
-                       a->step,
-                       a->round,
-                       a->group);
-            }
-            printf("\n\r");
-        }
-    }
-}
-
-void
-rgbease_event(uint8_t row, uint8_t column, bool pressed)
-{
-    uint8_t r, c, id;
-    rgbaction_t *act = &rgbaction[pressed][row][column];
-
-    if (act->f == F_NOP) {
-        return;
-    } else {
-        if (act->group) {
-            for (r = 0; r < ROWS_NUM; r++) {
-                for (c = 0; c < COLS_NUM; c++) {
-                    if (act->group == rgbgroup[r][c]) {
-                        id = key2led(r, c);
-                        rgbease_set_direct(id, palette[act->color], act->f, act->step, act->round);
-                    }
-                }
-            }
-        } else {
-            id = key2led(row, column);
-            rgbease_set_direct(id, palette[act->color], act->f, act->step, act->round);
-        }
-    }
-}
-
-void
-rgbease_set(uint8_t pressed, uint8_t row, uint8_t column, rgbaction_t *a)
-{
-    rgbaction_t *e;
-
-    if ((pressed >= PRESSED_NUM) ||
-        (row >= ROWS_NUM) ||
-        (column >= COLS_NUM)) {
-        elog("rgbease position out of bounds");
-        return;
-    }
-
-    e = &rgbaction[pressed][row][column];
-
-    e->color = a->color;
-    e->f = a->f;
-    e->step = a->step;
-    e->round = a->round;
-    e->group = a->group;
-}
-
-void
-rgbease_set_direct(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round)
+rgbease_set(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round)
 {
     rgbease_t *led = &leds[id];
 
@@ -249,7 +119,7 @@ rgbease_rainbow(uint8_t times)
     hsv_t color = HSV_RED;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
-        rgbease_set_direct(i, color, F_RAINBOW, 0, times);
+        rgbease_set(i, color, F_RAINBOW, 0, times);
         color.h += (HUE_MAX / RGB_ALL_NUM);
     }
 }
@@ -262,7 +132,7 @@ rgbease_dim_all(void)
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
         led = &leds[i];
-        rgbease_set_direct(i, led->target, F_DIM, 0, 0);
+        rgbease_set(i, led->target, F_DIM, 0, 0);
     }
 }
 
@@ -290,7 +160,7 @@ rgbease_rotate(uint8_t direction)
             color = palette[COLOR_BACKWARD];
         }
         if (leds[offset].f != F_COLOR_FLASH) {
-            rgbease_set_direct(offset, color, F_COLOR_FLASH, 0, 0);
+            rgbease_set(offset, color, F_COLOR_FLASH, 0, 0);
             return;
         }
     }
@@ -303,7 +173,7 @@ rgbease_layer(uint8_t layer)
     hsv_t color = palette[COLOR_1 + layer];
 
     for (i = RGB_BACKLIGHT_OFFSET; i < RGB_ALL_NUM; i++) {
-        rgbease_set_direct(i, color, F_COLOR_FLASH, 0, 0);
+        rgbease_set(i, color, F_COLOR_FLASH, 0, 0);
     }
 }
 
@@ -318,7 +188,7 @@ rgbease_advance() {
         switch (leds[i].f) {
             case F_NOP:
                 if (i >= RGB_BACKLIGHT_OFFSET) {
-                    rgbease_set_direct(i, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
+                    rgbease_set(i, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
                 } else {
                     continue;
                 }
@@ -405,32 +275,4 @@ rgbease_process()
         rgbease_advance();
         rgbease_timer = timer_set(MS_EASE);
     }
-}
-
-void
-rgbgroup_dump()
-{
-    uint8_t r, c;
-
-    printfnl("rgbgroup:");
-    for (r = 0; r < ROWS_NUM; r++) {
-        printf("row %02x: ", r);
-        for (c = 0; c < COLS_NUM; c++) {
-            printf("%02x ",
-                   rgbgroup[r][c]);
-        }
-        printf("\n\r");
-    }
-}
-
-void
-rgbgroup_set(uint8_t row, uint8_t column, uint8_t group)
-{
-    if ((row >= ROWS_NUM) ||
-        (column >= COLS_NUM)) {
-        elog("rgbgroup position out of bounds");
-        return;
-    }
-
-    rgbgroup[row][column] = group;
 }

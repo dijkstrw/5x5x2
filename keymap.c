@@ -44,7 +44,6 @@
 #include "layer.h"
 #include "macro.h"
 #include "mouse.h"
-#include "rgbease.h"
 #include "serial.h"
 #include "usb_keycode.h"
 
@@ -126,8 +125,6 @@ void
 keymap_event(uint16_t row, uint16_t col, bool pressed)
 {
     event_t *event = layer_get_event(row, col, pressed);
-
-    rgbease_event(row, col, pressed);
 
     switch (event->type) {
         case KMT_KEY:

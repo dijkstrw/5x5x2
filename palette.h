@@ -109,7 +109,7 @@ enum {
     COLOR_BACKWARD,
 
     COLOR_BACKGROUND,
-    
+
     COLOR_1,
     COLOR_2,
     COLOR_3,
@@ -126,5 +126,6 @@ enum {
 extern hsv_t palette[PALETTE_NUM];
 
 void palette_dump(void);
+hsv_t palette_get(uint8_t color);
 void palette_set(uint8_t color, hsv_t hsv);
 #endif

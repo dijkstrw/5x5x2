@@ -34,6 +34,7 @@
 #include "flash.h"
 #include "keyboard.h"
 #include "led.h"
+#include "light.h"
 #include "macro.h"
 #include "matrix.h"
 #include "mouse.h"
@@ -86,6 +87,7 @@ main(void)
     crc_init();
     serial_init();
     led_init();
+    light_init();
     matrix_init();
     macro_init();
     rotary_init();

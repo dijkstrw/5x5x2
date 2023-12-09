@@ -81,6 +81,13 @@
 #define MACRO_MAXLEN          32
 
 /*
+ * Number of screens to store the current desktop number for.  Should
+ * be minimally the same as the number of screen you are currently
+ * looking at.
+ */
+#define SCREENS_NUM           4
+
+/*
  * Amount of userflash to be used to store the configuration.
  *
  * STM32 flash page size depends on the device:

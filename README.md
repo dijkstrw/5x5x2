@@ -98,8 +98,6 @@ The available commands are:
          current firmware, so mission critical to me, useless to
          everybody else.
 
-    de - dump the rgb ease functions per key
-    dg - dump the rgb group per key
     dk - dump the keymap
     dp - dump the palette
     dr - dump the rotary configuration
@@ -109,12 +107,6 @@ The available commands are:
 
     C  - set the top set of 25 leds (frontlight) to custom rgb values.
          Takes a RGB argument of the form <rgb:6> times 25 for all leds.
-
-    E  - define an rgbease function for a key; takes arguments <pressed>
-         <row><column><color><function><step><round><group>.
-
-    G  - assign a particular key to a RGB group. Takes the arguments
-         <row><column><group>.
 
     K  - redefine a key in the keymap, takes argument of the form
          <layer><row><column><type><arg1><arg2><arg3>.
@@ -143,34 +135,6 @@ The available commands are:
          next powerup.
 
 Command interpretation starts after receiving a newline.
-
-Color easing
-------------
-Key down (and up) events can be tied to an rgb easing function. This
-means that a keypress will result in a led slowly changing to a
-particular color.
-
-The easing functions are updated every 1ms and keep track of where
-they are using ``round`` (e.g. going toward a color, going away from a
-color) and ``step`` (e.g. step 10 in the move to that color). The
-functions supported are:
-
-    - COLOR_FLASH : ease up towards a color in <step> increments, and
-                    then fade away.
-
-    - COLOR_HOLD  : ease towards a color in <step> increments and hold.
-
-    - DIM         : ease away in <step>s from color, end in off.
-
-    - BRIGHTEN    : ease towards color in <step>s, end in off.
-
-    - RAINBOW     : use on <round> to walk all hues, set <round> to
-                    number of times to repeat.
-
-    - BACKLIGHT   : use backlight color at backlight intensity.
-
-While configuring this you can also set the group. This way multiple
-keys can light together if one key is pressed.
 
 Palette
 -------

@@ -31,6 +31,7 @@
 #include "flash.h"
 #include "keyboard.h"
 #include "keymap.h"
+#include "light.h"
 #include "macro.h"
 #include "palette.h"
 #include "ring.h"
@@ -87,7 +88,7 @@ command_set_backcolor(struct ring *input_ring)
     uint8_t red, green, blue;
 
     for (n = RGB_BACKLIGHT_OFFSET; n < RGB_ALL_NUM; n++) {
-        rgbease_set_direct(n, dummy, F_OVERRIDE, 0, 0);
+        rgbease_set(n, dummy, F_OVERRIDE, 0, 0);
         red = read_hex_8(input_ring);
         green = read_hex_8(input_ring);
         blue = read_hex_8(input_ring);
@@ -106,7 +107,7 @@ command_set_color(struct ring *input_ring)
         for (c = 0; c < COLS_NUM; c++) {
             n = key2led(r, c);
 
-            rgbease_set_direct(n, dummy, F_OVERRIDE, 0, 0);
+            rgbease_set(n, dummy, F_OVERRIDE, 0, 0);
             red = read_hex_8(input_ring);
             green = read_hex_8(input_ring);
             blue = read_hex_8(input_ring);
@@ -116,33 +117,14 @@ command_set_color(struct ring *input_ring)
 }
 
 static void
-command_set_ease(struct ring *input_ring)
+command_set_desktop(struct ring* input_ring)
 {
-    rgbaction_t action;
-    uint8_t apressed, arow, acolumn;
+    uint8_t adisplay, ascreen;
 
-    apressed = read_hex_8(input_ring);
-    arow = read_hex_8(input_ring);
-    acolumn = read_hex_8(input_ring);
-    action.color = read_hex_8(input_ring);
-    action.f = read_hex_8(input_ring);
-    action.step = read_hex_8(input_ring);
-    action.round = read_hex_8(input_ring);
-    action.group = read_hex_8(input_ring);
+    ascreen  = read_hex_8(input_ring);
+    adisplay = read_hex_8(input_ring);
 
-    rgbease_set(apressed, arow, acolumn, &action);
-}
-
-static void
-command_set_group(struct ring *input_ring)
-{
-    uint8_t arow, acolumn, agroup;
-
-    arow = read_hex_8(input_ring);
-    acolumn = read_hex_8(input_ring);
-    agroup = read_hex_8(input_ring);
-
-    rgbgroup_set(arow, acolumn, agroup);
+    light_set_desktop(ascreen, adisplay);
 }
 
 static void
@@ -277,14 +259,6 @@ command_process(struct ring *input_ring)
             case CMD_DUMP:
                 if (ring_read_ch(input_ring, &c) != -1) {
                     switch (c) {
-                        case DUMP_EASE:
-                            rgbease_dump();
-                            break;
-
-                        case DUMP_GROUP:
-                            rgbgroup_dump();
-                            break;
-
                         case DUMP_KEYMAP:
                             keymap_dump();
                             break;
@@ -300,12 +274,8 @@ command_process(struct ring *input_ring)
                 }
                 break;
 
-            case CMD_EASE_SET:
-                command_set_ease(input_ring);
-                break;
-
-            case CMD_GROUP_SET:
-                command_set_group(input_ring);
+            case CMD_DISPLAY_SET:
+                command_set_desktop(input_ring);
                 break;
 
             case CMD_INTENSITY_SET:

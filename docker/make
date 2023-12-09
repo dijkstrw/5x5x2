@@ -1,2 +1,2 @@
 #!/bin/bash
-dev.sh make $@
+dev.sh make $*
