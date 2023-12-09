@@ -74,11 +74,24 @@
  * We need to be able to communicate these items via serial, so what is the
  * protocol:
  *
- * D SS DD
+ * D T SS DD
+ * | |  | |
+ * | |  | ╰ Desktop 01-10
+ * | |  ╰-- Screen 00 = all, 01-04 a specific one
+ * | ╰----- 'D' for desktop
+ * ╰------- 'D' fixed, to indicate 'D'isplay event / 'D'esktop event
+ *
+ * D T MM
  * | |  |
- * | |  ╰ Desktop 01-10
- * | ╰--- Screen 00 = all, 01-04 a specific one
- * ╰----- 'D' fixed, to indicate 'D'isplay event / 'D'esktop event
+ * | |  ╰-- Mute status 00 = not muted, 01 = muted
+ * | ╰----- 'M' for sound output, 'R' for mic input
+ * ╰------- 'D' fixed, to indicate 'D'isplay event / 'D'esktop event
+ *
+ * D T VVVV
+ * | |  |
+ * | |  ╰-- Volume 0000 - ffff
+ * | ╰----- 'V' for volume
+ * ╰------- 'D' fixed, to indicate 'D'isplay event / 'D'esktop event
  *
  */
 
@@ -87,18 +100,25 @@ enum {
     LIGHT_BACKLIGHT       = 'B',
     LIGHT_DESKTOP         = 'D',
     LIGHT_LAYER           = 'L',
-    LIGHT_MACRO           = 'M',
-    LIGHT_MICROPHONE      = 'R',
+    LIGHT_MACRO           = 'm',
+    LIGHT_MIC_MUTE        = 'R',
+    LIGHT_MUTE            = 'M',
     LIGHT_NKRO            = 'N',
-    LIGHT_SOUND           = 'S',
+    LIGHT_VOLUME          = 'V',
 };
 
 typedef struct {
     uint8_t desktop[SCREENS_NUM];
+    uint8_t mic_mute;
+    uint8_t mute;
+    uint16_t volume;
 } lightstate_t;
 
 void light_init(void);
 void light_apply_state(uint8_t only_type);
 void light_set_desktop(uint8_t screen, uint8_t display);
+void light_set_mic_mute(uint8_t state);
+void light_set_mute(uint8_t state);
+void light_set_volume(uint16_t volume);
 
 #endif /* _LIGHT_H */

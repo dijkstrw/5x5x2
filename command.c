@@ -117,7 +117,7 @@ command_set_color(struct ring *input_ring)
 }
 
 static void
-command_set_desktop(struct ring* input_ring)
+command_set_light_desktop(struct ring* input_ring)
 {
     uint8_t adisplay, ascreen;
 
@@ -125,6 +125,31 @@ command_set_desktop(struct ring* input_ring)
     adisplay = read_hex_8(input_ring);
 
     light_set_desktop(ascreen, adisplay);
+}
+
+static void
+command_set_light_mic_mute(struct ring* input_ring)
+{
+    uint8_t astate = read_hex_8(input_ring);
+
+    light_set_mic_mute(astate);
+}
+
+static void
+command_set_light_mute(struct ring* input_ring)
+{
+    uint8_t astate = read_hex_8(input_ring);
+
+    light_set_mute(astate);
+}
+
+static void
+command_set_light_volume(struct ring* input_ring)
+{
+    uint16_t avolume = ((read_hex_8(input_ring) << 8) |
+                        read_hex_8(input_ring));
+
+    light_set_volume(avolume);
 }
 
 static void
@@ -275,7 +300,22 @@ command_process(struct ring *input_ring)
                 break;
 
             case CMD_DISPLAY_SET:
-                command_set_desktop(input_ring);
+                if (ring_read_ch(input_ring, &c) != -1) {
+                    switch (c) {
+                        case LIGHT_DESKTOP:
+                            command_set_light_desktop(input_ring);
+                            break;
+                        case LIGHT_MIC_MUTE:
+                            command_set_light_mic_mute(input_ring);
+                            break;
+                        case LIGHT_MUTE:
+                            command_set_light_mute(input_ring);
+                            break;
+                        case LIGHT_VOLUME:
+                            command_set_light_volume(input_ring);
+                            break;
+                    }
+                }
                 break;
 
             case CMD_INTENSITY_SET:

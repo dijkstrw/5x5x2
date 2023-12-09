@@ -33,27 +33,28 @@
 #include "light.h"
 #include "palette.h"
 #include "rgbease.h"
+#include "rgbmap.h"
 
 uint8_t lightmap[LAYERS_NUM][ROWS_NUM][COLS_NUM] =
 {
     {
-        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MICROPHONE },
+        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MUTE       },
         { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP    },
-        { LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND      },
+        { LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME     },
         { LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO      },
         { LIGHT_LAYER,   LIGHT_LAYER,   LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_BACKLIGHT  },
     },
     {
-        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MICROPHONE },
+        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MUTE       },
         { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP    },
-        { LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND      },
+        { LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME     },
         { LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO      },
         { LIGHT_LAYER,   LIGHT_LAYER,   LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_BACKLIGHT  },
     },
     {
-        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MICROPHONE },
+        { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MUTE       },
         { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP    },
-        { LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND,   LIGHT_SOUND      },
+        { LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME     },
         { LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO,   LIGHT_MACRO      },
         { LIGHT_LAYER,   LIGHT_LAYER,   LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_BACKLIGHT  },
     },
@@ -82,12 +83,38 @@ light_set_desktop(uint8_t ascreen, uint8_t adisplay)
 }
 
 void
+light_set_mic_mute(uint8_t astate)
+{
+    light_state.mic_mute = astate;
+    light_apply_state(LIGHT_MUTE);
+}
+
+void
+light_set_mute(uint8_t astate)
+{
+    light_state.mic_mute = astate;
+    light_apply_state(LIGHT_MUTE);
+}
+
+void
+light_set_volume(uint16_t avolume)
+{
+    light_state.volume = avolume;
+    light_apply_state(LIGHT_VOLUME);
+}
+
+void
 light_apply_state(uint8_t only_type)
 {
     uint8_t r, c;
     uint8_t id, typ;
     uint8_t screen = 0;
     hsv_t color;
+    const hsv_t c_green = HSV_GREEN;
+    const hsv_t c_purple = HSV_PURPLE;
+    const hsv_t c_red = HSV_RED;
+    const hsv_t c_white = HSV_WHITE;
+    const hsv_t c_yellow = HSV_YELLOW;
 
     for (r = 0; r < ROWS_NUM; r++) {
         for (c = 0; c < COLS_NUM; c++) {
@@ -102,6 +129,29 @@ light_apply_state(uint8_t only_type)
                 color = palette_get(COLOR_1 + light_state.desktop[screen]);
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 screen = (screen + 1) % SCREENS_NUM;
+                break;
+
+           case LIGHT_MUTE:
+               if (light_state.mic_mute) {
+                   if (light_state.mute) {
+                       color = c_red;
+                   } else {
+                       color = c_purple;
+                   }
+               } else {
+                   if (light_state.mute) {
+                       color = c_yellow;
+                   } else {
+                       color = c_green;
+                   }
+               }
+               rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
+               break;
+
+           case LIGHT_VOLUME:
+                color = c_white;
+                color.h = light_state.volume / U16_HSV_STEP;
+                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 break;
             }
         }
