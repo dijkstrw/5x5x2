@@ -167,17 +167,6 @@ rgbease_rotate(uint8_t direction)
 }
 
 void
-rgbease_layer(uint8_t layer)
-{
-    uint8_t i;
-    hsv_t color = palette[COLOR_1 + layer];
-
-    for (i = RGB_BACKLIGHT_OFFSET; i < RGB_ALL_NUM; i++) {
-        rgbease_set(i, color, F_COLOR_FLASH, 0, 0);
-    }
-}
-
-void
 rgbease_advance() {
     uint8_t i;
     hsv_t color;

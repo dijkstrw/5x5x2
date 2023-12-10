@@ -133,6 +133,7 @@ typedef struct {
 void light_init(void);
 void light_apply_state(uint8_t only_type);
 void light_set_desktop(uint8_t screen, uint8_t display);
+void light_set_layer(uint8_t layer);
 void light_set_mic_mute(uint8_t state);
 void light_set_mute(uint8_t state);
 void light_set_volume(uint16_t volume);

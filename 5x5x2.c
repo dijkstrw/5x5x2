@@ -134,6 +134,7 @@ main(void)
                 enumeration_active = false;
                 keyboard_active = serial_active = true;
                 led_state(0);
+                light_apply_state(0);
             }
         }
 

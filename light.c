@@ -83,6 +83,12 @@ light_set_desktop(uint8_t ascreen, uint8_t adisplay)
 }
 
 void
+light_set_layer(uint8_t alayer)
+{
+    light_apply_state(0);
+}
+
+void
 light_set_mic_mute(uint8_t astate)
 {
     light_state.mic_mute = astate;
@@ -124,6 +130,11 @@ light_apply_state(uint8_t only_type)
                 color = palette_get(COLOR_1 + light_state.desktop[screen]);
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 screen = (screen + 1) % SCREENS_NUM;
+                break;
+
+            case LIGHT_LAYER:
+                color = palette_get(COLOR_6 + layer);
+                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 break;
 
             case LIGHT_MUTE:

@@ -75,7 +75,6 @@ void rgbease_init(void);
 void rgbease_advance(void);
 void rgbease_dim_all(void);
 void rgbease_event(uint8_t row, uint8_t column, bool pressed);
-void rgbease_layer(uint8_t layer);
 void rgbease_process(void);
 void rgbease_rainbow(uint8_t times);
 void rgbease_rotate(uint8_t direction);

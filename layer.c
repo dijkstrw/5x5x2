@@ -39,7 +39,7 @@
 #include "config.h"
 #include "elog.h"
 #include "layer.h"
-#include "rgbease.h"
+#include "light.h"
 
 uint8_t layer = 0;
 
@@ -58,7 +58,7 @@ layer_advance(uint8_t next)
 {
     context.previous = layer;
     layer = next % LAYERS_NUM;
-    rgbease_layer(layer);
+    light_set_layer(layer);
     elog("layer %02x active", layer);
 }
 
@@ -66,7 +66,7 @@ static void
 layer_return()
 {
     layer = context.previous;
-    rgbease_layer(layer);
+    light_set_layer(layer);
     elog("layer %02x active", layer);
 }
 
