@@ -92,7 +92,7 @@ light_set_mic_mute(uint8_t astate)
 void
 light_set_mute(uint8_t astate)
 {
-    light_state.mic_mute = astate;
+    light_state.mute = astate;
     light_apply_state(LIGHT_MUTE);
 }
 
@@ -110,11 +110,6 @@ light_apply_state(uint8_t only_type)
     uint8_t id, typ;
     uint8_t screen = 0;
     hsv_t color;
-    const hsv_t c_green = HSV_GREEN;
-    const hsv_t c_purple = HSV_PURPLE;
-    const hsv_t c_red = HSV_RED;
-    const hsv_t c_white = HSV_WHITE;
-    const hsv_t c_yellow = HSV_YELLOW;
 
     for (r = 0; r < ROWS_NUM; r++) {
         for (c = 0; c < COLS_NUM; c++) {
@@ -131,27 +126,27 @@ light_apply_state(uint8_t only_type)
                 screen = (screen + 1) % SCREENS_NUM;
                 break;
 
-           case LIGHT_MUTE:
+            case LIGHT_MUTE:
                if (light_state.mic_mute) {
                    if (light_state.mute) {
-                       color = c_red;
+                       color = hsv_red;
                    } else {
-                       color = c_purple;
+                       color = hsv_magenta;
                    }
                } else {
                    if (light_state.mute) {
-                       color = c_yellow;
+                       color = hsv_yellow;
                    } else {
-                       color = c_green;
+                       color = hsv_green;
                    }
                }
-               rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
+               rgbease_set(id, color, F_COLOR_HOLD, STEP_FAST, 0);
                break;
 
-           case LIGHT_VOLUME:
-                color = c_white;
-                color.h = light_state.volume / U16_HSV_STEP;
-                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
+            case LIGHT_VOLUME:
+                color = hsv_yellow;
+                color.h = LIGHT_VOLUME_TO_HUE(light_state.volume);
+                rgbease_set(id, color, F_COLOR_HOLD, STEP_FAST, 0);
                 break;
             }
         }

@@ -101,6 +101,44 @@
 #define HSV_ROSE                    HSV(HUE_ROSE,       0xff, 0xff) // #ff0080
 #define HSV_CRIMSON                 HSV(HUE_CRIMSON,    0xff, 0xff) // #ff0040
 
+/*
+ * Explicit const hsv_t for each color
+ */
+extern const hsv_t hsv_white;
+extern const hsv_t hsv_silver;
+extern const hsv_t hsv_gray;
+extern const hsv_t hsv_black;
+extern const hsv_t hsv_red;
+extern const hsv_t hsv_maroon;
+extern const hsv_t hsv_yellow;
+extern const hsv_t hsv_olive;
+extern const hsv_t hsv_blime;
+extern const hsv_t hsv_green;
+extern const hsv_t hsv_aqua;
+extern const hsv_t hsv_teal;
+extern const hsv_t hsv_blue;
+extern const hsv_t hsv_navy;
+extern const hsv_t hsv_fuchsia;
+extern const hsv_t hsv_vermilion;
+extern const hsv_t hsv_amber;
+extern const hsv_t hsv_lime;
+extern const hsv_t hsv_orange;
+extern const hsv_t hsv_chartreuse;
+extern const hsv_t hsv_ddahal;
+extern const hsv_t hsv_erin;
+extern const hsv_t hsv_spring;
+extern const hsv_t hsv_gashyanta;
+extern const hsv_t hsv_cyan;
+extern const hsv_t hsv_capri;
+extern const hsv_t hsv_azure;
+extern const hsv_t hsv_cerulean;
+extern const hsv_t hsv_volta;
+extern const hsv_t hsv_violet;
+extern const hsv_t hsv_magenta;
+extern const hsv_t hsv_cerise;
+extern const hsv_t hsv_rose;
+extern const hsv_t hsv_crimson;
+
 enum {
     COLOR_OFF,
     COLOR_ON,

@@ -47,18 +47,6 @@ typedef struct {
 #define SEXTANT_MAX                 6
 #define HUE_MAX                     ((SEXTANT_MAX * HUE_SEXTANT) - 1)
 
-/*
- * For volume calculation we need to go from an u16 to a hue;
- *
- * u16 can range from 0 - 0xffff
- * hue can range from 0 - 360 as input,
- * stored here as     0 - 360 * (0x100/60) = 0 - 0x600
- *
- * now to map 0xffff to 0x600; step = 0xffff / 0x600, so for every
- * step change in u16 we can add one to the hue.
- */
-#define U16_HSV_STEP                (0xffff / HUE_MAX)
-
 uint8_t key2led(uint8_t row, uint8_t column);
 void hsv2rgb(hsv_t *h, rgbpixel_t *p);
 

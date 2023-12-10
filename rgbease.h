@@ -60,6 +60,7 @@ typedef struct {
 
 extern fract8_t rgbintensity;
 
+#define STEP_FAST             0xfe
 #define STEP_LAST             0xff
 #define STEP_RAINBOW          0x03
 
@@ -67,8 +68,6 @@ extern fract8_t rgbintensity;
 #define ROUND_FIRST           0x00
 #define ROUND_SECOND          0x01
 #define ROUND_THIRD           0x02
-
-#define GROUP_LAST            0xff
 
 #define EASE(Color, Func, Step, Round, Group) { .color = Color, .f = Func, .step = Step, .round = Round, .group = Group }
 

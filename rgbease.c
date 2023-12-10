@@ -88,7 +88,7 @@ ease8_inoutquad(uint8_t i)
     }
     uint8_t jj  = scale8(j, j);
     uint8_t jj2 = jj << 1;
-    if( i & 0x80 ) {
+    if (i & 0x80) {
         jj2 = 0xff - jj2;
     }
     return jj2;

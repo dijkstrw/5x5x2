@@ -114,6 +114,22 @@ typedef struct {
     uint16_t volume;
 } lightstate_t;
 
+/*
+ * The hsv color range ranges from red at 0° to red at 360°. To
+ * display volume levels we want to use yellow at 60° ranging to red
+ * at 360°.
+ *
+ * Looking at color inputs we need to supply a hsv_t, where the hue
+ * component is expressed internally as 0 to 0x600, with 0x600
+ * representing 360°.
+ *
+ * yellow at 60° is 0x100 and we can range to 0x0600.
+ * map to volume    0x0                       0xffff.
+ */
+
+#define _VOL_RANGE_DIV         ((0xFFFF / 0x500) + 1)
+#define LIGHT_VOLUME_TO_HUE(v) (HUE_SEXTANT + (v / _VOL_RANGE_DIV))
+
 void light_init(void);
 void light_apply_state(uint8_t only_type);
 void light_set_desktop(uint8_t screen, uint8_t display);
