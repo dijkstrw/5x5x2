@@ -107,6 +107,7 @@ rgbease_set(uint8_t id, hsv_t target, uint8_t f, uint8_t step, uint8_t round)
     rgbease_t *led = &leds[id];
 
     led->target = target;
+    led->target.v = scale8(led->target.v, rgbintensity);
     led->f = f;
     led->step = step;
     led->round = round;
