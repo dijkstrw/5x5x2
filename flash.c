@@ -44,6 +44,7 @@
 #include "keyboard.h"
 #include "keymap.h"
 #include "layer.h"
+#include "light.h"
 #include "macro.h"
 #include "palette.h"
 #include "rgbease.h"
@@ -69,6 +70,7 @@ typedef struct {
     uint32_t layer;
     uint32_t nkro_active;
     uint32_t rgbintensity;
+    uint8_t lightmap[LAYERS_NUM][ROWS_NUM][COLS_NUM];
 } __attribute__ ((packed)) flashdata_t;
 
 typedef struct {
@@ -160,6 +162,7 @@ flash_read_config(void)
     memcpy(macro_buffer, flash.data.macro_buffer, sizeof(flash.data.macro_buffer));
     memcpy(macro_len, flash.data.macro_len, sizeof(flash.data.macro_len));
     memcpy(palette, flash.data.palette, sizeof(flash.data.palette));
+    memcpy(lightmap, flash.data.lightmap, sizeof(flash.data.lightmap));
     layer = flash.data.layer;
     nkro_active = flash.data.nkro_active;
     rgbintensity = flash.data.rgbintensity;
@@ -246,6 +249,11 @@ flash_write_config(void)
     if (!flash_write_block(&flash.data.rgbintensity,
                            &data,
                            sizeof(data))) {
+        return 0;
+    }
+    if (!flash_write_block(&flash.data.lightmap,
+                            lightmap,
+                            sizeof(flash.data.lightmap))) {
         return 0;
     }
     crc = flash_crc();

@@ -40,6 +40,7 @@
 #define CMD_DISPLAY_SET   'D'
 #define CMD_INTENSITY_SET 'I'
 #define CMD_KEYMAP_SET    'K'
+#define CMD_LIGHT_SET     'G'
 #define CMD_MACRO_CLEAR   'A'
 #define CMD_MACRO_SET     'M'
 #define CMD_NKRO_SET      'N'
@@ -47,6 +48,7 @@
 #define CMD_ROTARY_SET    'R'
 
 #define DUMP_KEYMAP       'k'
+#define DUMP_LIGHT        'l'
 #define DUMP_ROTARY       'r'
 #define DUMP_PALETTE      'p'
 

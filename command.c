@@ -181,6 +181,19 @@ command_set_keymap(struct ring *input_ring)
 }
 
 static void
+command_set_light(struct ring *input_ring)
+{
+    uint8_t alayer, arow, acolumn, avalue;
+
+    alayer = read_hex_8(input_ring);
+    arow = read_hex_8(input_ring);
+    acolumn = read_hex_8(input_ring);
+    avalue = read_hex_8(input_ring);
+
+    light_set(alayer, arow, acolumn, avalue);
+}
+
+static void
 command_set_macro(struct ring *input_ring)
 {
     uint8_t number = read_hex_8(input_ring);
@@ -288,6 +301,10 @@ command_process(struct ring *input_ring)
                             keymap_dump();
                             break;
 
+                        case DUMP_LIGHT:
+                            light_dump();
+                            break;
+
                         case DUMP_ROTARY:
                             rotary_dump();
                             break;
@@ -326,6 +343,10 @@ command_process(struct ring *input_ring)
                 command_set_keymap(input_ring);
                 break;
 
+            case CMD_LIGHT_SET:
+                command_set_light(input_ring);
+                break;
+
             case CMD_MACRO_CLEAR:
                 macro_init();
                 break;
@@ -349,11 +370,10 @@ command_process(struct ring *input_ring)
             case '?':
                 printfnl("commands:");
                 printfnl("i                 - identify");
-                printfnl("dt                - dump type: [e]ase, [g]roup, [k]eymap, [r]otary, [p]alette");
+                printfnl("dt                - dump type: [l]ight, [k]eymap, [r]otary, [p]alette");
                 printfnl("B[rrggbb]*8       - set color rgb of bottom layer");
                 printfnl("C[rrggbb]*25      - set color rgb of top layer");
-                printfnl("EpprrccCCffssrrgg - set ease: pressed, row, column, color, function, step, round, group");
-                printfnl("Grrccgg           - set group: row, column, group");
+                printfnl("Grrccgg           - set light: layer, row, column, group");
                 printfnl("Iii               - set backlight / bottom layer intensity");
                 printfnl("Kllrrcctta1a2a3   - set keymap layer, row, column, type, arg1-3");
                 printfnl("m                 - clear all macro keys");

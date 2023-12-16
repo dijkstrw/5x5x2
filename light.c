@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "elog.h"
 #include "layer.h"
 #include "light.h"
 #include "palette.h"
@@ -62,9 +63,40 @@ uint8_t lightmap[LAYERS_NUM][ROWS_NUM][COLS_NUM] =
 
 lightstate_t light_state;
 
-void light_init()
+void
+light_dump()
+{
+    uint8_t l, r, c;
+
+    for (l = 0; l < LAYERS_NUM; l++) {
+        printfnl("layer %02x", l);
+        for (r = 0; r < ROWS_NUM; r++) {
+            printf("row %02x: ", r);
+            for (c = 0; c < COLS_NUM; c++) {
+                printf("%c ", lightmap[l][r][c]);
+            }
+            printf("\n\r");
+        }
+    }
+}
+
+void
+light_init()
 {
     memset(&light_state, 0, sizeof(light_state));
+}
+
+void
+light_set(uint8_t l, uint8_t r, uint8_t c, uint8_t v)
+{
+    if ((l >= LAYERS_NUM) ||
+        (r >= ROWS_NUM) ||
+        (c >= COLS_NUM)) {
+        elog("light position out of bounds");
+        return;
+    }
+
+    lightmap[l][r][c] = v;
 }
 
 void

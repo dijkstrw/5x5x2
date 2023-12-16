@@ -60,19 +60,11 @@
  *   can be in the way of normal mousework, so this too must be
  *   clearly visible.
  *
- * - nkro status
- *
- * - screen locked
- *
- * - power up / down
- *
  * - vumeter -- color information coming from serial that maps to
  *   audio played by the main system.
  *
- * - custom -- effects you want to trigger the keyboard for.
- *
- * We need to be able to communicate these items via serial, so what is the
- * protocol:
+ * Some of these events can happen on the host, so we need to be able
+ * to communicate these via serial:
  *
  * D T SS DD
  * | |  | |
@@ -103,7 +95,6 @@ enum {
     LIGHT_MACRO           = 'm',
     LIGHT_MIC_MUTE        = 'R',
     LIGHT_MUTE            = 'M',
-    LIGHT_NKRO            = 'N',
     LIGHT_VOLUME          = 'V',
 };
 
@@ -130,8 +121,12 @@ typedef struct {
 #define _VOL_RANGE_DIV         ((0xFFFF / 0x500) + 1)
 #define LIGHT_VOLUME_TO_HUE(v) (HUE_SEXTANT + (v / _VOL_RANGE_DIV))
 
+extern uint8_t lightmap[][ROWS_NUM][COLS_NUM];
+
+void light_dump();
 void light_init(void);
 void light_apply_state(uint8_t only_type);
+void light_set(uint8_t l, uint8_t r, uint8_t c, uint8_t v);
 void light_set_desktop(uint8_t screen, uint8_t display);
 void light_set_layer(uint8_t layer);
 void light_set_mic_mute(uint8_t state);
