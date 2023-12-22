@@ -160,6 +160,7 @@ command_set_intensity(struct ring *input_ring)
     aintensity = read_hex_8(input_ring);
 
     rgbintensity = (fract8_t)aintensity;
+    light_apply_state(LIGHT_ALL);
 }
 
 static void

@@ -89,6 +89,7 @@
  */
 
 enum {
+    LIGHT_ALL             = 0,
     LIGHT_AUTOMOUSE       = 'A',
     LIGHT_BACKLIGHT       = 'B',
     LIGHT_DESKTOP         = 'D',

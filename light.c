@@ -158,6 +158,10 @@ light_apply_state(uint8_t only_type)
             id = key2led(r, c);
 
             switch (typ) {
+            case LIGHT_BACKLIGHT:
+                rgbease_set(id, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
+                break;
+
             case LIGHT_DESKTOP:
                 color = palette_get(COLOR_1 + light_state.desktop[screen]);
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
