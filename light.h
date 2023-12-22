@@ -31,6 +31,7 @@
 #include <stdint.h>
 
 #include "config.h"
+#include "flash.h"
 
 /* The keyboard has 5x5 + 8 leds and can show a variety of statusses.
  *
@@ -98,6 +99,14 @@ enum {
     LIGHT_VOLUME          = 'V',
 };
 
+#define _LIGHTMAP_SIZE        (LAYERS_NUM * ROWS_NUM * COLS_NUM)
+#define _LIGHTMAP_FLASH_SIZE  FLASH_ALIGNED_SIZE(_LIGHTMAP_SIZE)
+
+typedef struct {
+    uint8_t data[LAYERS_NUM][ROWS_NUM][COLS_NUM];
+    uint8_t padding[_LIGHTMAP_FLASH_SIZE - _LIGHTMAP_SIZE];
+} __attribute__ ((packed)) lightmap_t;
+
 typedef struct {
     uint8_t desktop[SCREENS_NUM];
     uint8_t mic_mute;
@@ -121,7 +130,7 @@ typedef struct {
 #define _VOL_RANGE_DIV         ((0xFFFF / 0x500) + 1)
 #define LIGHT_VOLUME_TO_HUE(v) (HUE_SEXTANT + (v / _VOL_RANGE_DIV))
 
-extern uint8_t lightmap[][ROWS_NUM][COLS_NUM];
+extern lightmap_t lightmap;
 
 void light_dump();
 void light_init(void);

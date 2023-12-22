@@ -67,10 +67,10 @@ typedef struct {
     event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
     uint8_t macro_len[MACRO_MAXKEYS];
     hsv_t palette[PALETTE_NUM];
+    lightmap_t lightmap;
     uint32_t layer;
     uint32_t nkro_active;
     uint32_t rgbintensity;
-    uint8_t lightmap[LAYERS_NUM][ROWS_NUM][COLS_NUM];
 } __attribute__ ((packed)) flashdata_t;
 
 typedef struct {
@@ -123,9 +123,6 @@ flash_erase()
     flash_clear_status_flags();
     flash_unlock();
 
-    /* GD32F103 needs some additional time after unlock */
-    __asm__("nop"); __asm__("nop");
-
     for (i = 0; i < FLASH_PAGE_NUM; i++) {
         flash_erase_page((uint32_t)&flash.page.data[i]);
         status = flash_get_status_flags();
@@ -162,7 +159,7 @@ flash_read_config(void)
     memcpy(macro_buffer, flash.data.macro_buffer, sizeof(flash.data.macro_buffer));
     memcpy(macro_len, flash.data.macro_len, sizeof(flash.data.macro_len));
     memcpy(palette, flash.data.palette, sizeof(flash.data.palette));
-    memcpy(lightmap, flash.data.lightmap, sizeof(flash.data.lightmap));
+    memcpy(lightmap.data, flash.data.lightmap.data, sizeof(flash.data.lightmap));
     layer = flash.data.layer;
     nkro_active = flash.data.nkro_active;
     rgbintensity = flash.data.rgbintensity;
@@ -177,7 +174,7 @@ flash_write_block(void *dest, const void *src, uint32_t len)
     uint32_t i;
     uint32_t status;
     uint32_t d = (uint32_t)dest;
-    const uint32_t *s = (uint32_t *)src;
+    uint32_t s = (uint32_t)src;
 
     if ((d < (uint32_t)&flash) ||
         ((d + len) > ((uint32_t)&flash + sizeof(flash)))) {
@@ -185,12 +182,15 @@ flash_write_block(void *dest, const void *src, uint32_t len)
         return 0;
     }
     for (i = 0; i < len; i += sizeof(uint32_t)) {
-        flash_program_word(d++, *s++);
+        flash_program_word(d, *((uint32_t *)s));
         status = flash_get_status_flags();
         if (status != FLASH_SR_EOP) {
             elog("error after write %d:%02x", i, status);
             return 0;
         }
+
+        d += sizeof(uint32_t);
+        s += sizeof(uint32_t);
     }
 
     return 1;
@@ -233,6 +233,11 @@ flash_write_config(void)
                            sizeof(flash.data.palette))) {
         return 0;
     }
+    if (!flash_write_block(&flash.data.lightmap.data,
+                           lightmap.data,
+                           sizeof(flash.data.lightmap))) {
+        return 0;
+    }
     data = (uint32_t)layer;
     if (!flash_write_block(&flash.data.layer,
                            &data,
@@ -249,11 +254,6 @@ flash_write_config(void)
     if (!flash_write_block(&flash.data.rgbintensity,
                            &data,
                            sizeof(data))) {
-        return 0;
-    }
-    if (!flash_write_block(&flash.data.lightmap,
-                            lightmap,
-                            sizeof(flash.data.lightmap))) {
         return 0;
     }
     crc = flash_crc();

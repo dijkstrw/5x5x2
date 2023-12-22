@@ -30,6 +30,12 @@
 
 #include <stdint.h>
 
+/*
+ * Flash is operated on per 4 byte word. This define calculates the
+ * nearest (upto 3 bytes larger) increment that fits x bytes
+ */
+#define FLASH_ALIGNED_SIZE(x) ((x + 0b11) & ~ 0b11)
+
 void crc_init(void);
 
 uint32_t flash_clear_config(void);

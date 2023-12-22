@@ -36,9 +36,9 @@
 #include "rgbease.h"
 #include "rgbmap.h"
 
-uint8_t lightmap[LAYERS_NUM][ROWS_NUM][COLS_NUM] =
+lightmap_t lightmap =
 {
-    {
+    .data[0] = {
         { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_MUTE       },
         { LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP, LIGHT_DESKTOP    },
         { LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME,  LIGHT_VOLUME     },
@@ -73,7 +73,7 @@ light_dump()
         for (r = 0; r < ROWS_NUM; r++) {
             printf("row %02x: ", r);
             for (c = 0; c < COLS_NUM; c++) {
-                printf("%c ", lightmap[l][r][c]);
+                printf("%c ", lightmap.data[l][r][c]);
             }
             printf("\n\r");
         }
@@ -96,7 +96,7 @@ light_set(uint8_t l, uint8_t r, uint8_t c, uint8_t v)
         return;
     }
 
-    lightmap[l][r][c] = v;
+    lightmap.data[l][r][c] = v;
 }
 
 void
@@ -151,7 +151,7 @@ light_apply_state(uint8_t only_type)
 
     for (r = 0; r < ROWS_NUM; r++) {
         for (c = 0; c < COLS_NUM; c++) {
-            typ = lightmap[layer][r][c];
+            typ = lightmap.data[layer][r][c];
             if (only_type && (typ != only_type)) {
                 continue;
             }
