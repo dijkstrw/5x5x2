@@ -32,6 +32,7 @@
 enum {
     F_NOP = 0,
     F_COLOR_FLASH,
+    F_COLOR_FLASHING,
     F_COLOR_HOLD,
     F_BRIGHTEN,
     F_DIM,

@@ -206,6 +206,27 @@ rgbease_advance() {
                 }
                 break;
 
+            case F_COLOR_FLASHING:
+                leds[i].step += 3;
+                step = ease8_inoutquad(leds[i].step);
+                if (leds[i].step == STEP_LAST) {
+                    leds[i].round++;
+                    leds[i].step = 0;
+                }
+                if (leds[i].round == ROUND_THIRD) {
+                    leds[i].round = ROUND_FIRST;
+                }
+                switch (leds[i].round) {
+                    case ROUND_FIRST:
+                        /* move towards the color */
+                        color.v = scale8(color.v, step);
+                        break;
+                    case ROUND_SECOND:
+                        color.v = scale8(color.v, STEP_LAST - step);
+                        break;
+                }
+                break;
+
             case F_COLOR_HOLD:
                 /* move towards the color */
                 step = ease8_inoutquad(++leds[i].step);

@@ -32,6 +32,7 @@
 #include "elog.h"
 #include "layer.h"
 #include "light.h"
+#include "macro.h"
 #include "palette.h"
 #include "rgbease.h"
 #include "rgbmap.h"
@@ -121,6 +122,12 @@ light_set_layer(uint8_t alayer)
 }
 
 void
+light_set_macro(uint8_t amacro)
+{
+    light_apply_state(LIGHT_MACRO);
+}
+
+void
 light_set_mic_mute(uint8_t astate)
 {
     light_state.mic_mute = astate;
@@ -162,16 +169,26 @@ light_apply_state(uint8_t only_type)
                 rgbease_set(id, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
                 break;
 
+            case LIGHT_MACRO:
+                if (macro_active) {
+                    color = palette_get(COLOR_MACRO);
+                    rgbease_set(id, color, F_COLOR_FLASHING, 0, 0);
+                } else {
+                    rgbease_set(id, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
+                }
+                break;
+
             case LIGHT_DESKTOP:
-                color = palette_get(COLOR_1 + light_state.desktop[screen]);
+                color = palette_get(COLOR_DESKTOP + light_state.desktop[screen]);
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 screen = (screen + 1) % SCREENS_NUM;
                 break;
 
             case LIGHT_LAYER:
-                color = palette_get(COLOR_6 + layer);
+                color = palette_get(COLOR_LAYER + layer);
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 break;
+
 
             case LIGHT_MUTE:
                if (light_state.mic_mute) {

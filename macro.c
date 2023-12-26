@@ -40,6 +40,7 @@
 #include "led.h"
 #include "macro.h"
 #include "map_ascii.h"
+#include "light.h"
 
 event_t macro_buffer[MACRO_MAXKEYS][MACRO_MAXLEN];
 uint8_t macro_len[MACRO_MAXKEYS];
@@ -104,6 +105,7 @@ macro_event(event_t *event, bool pressed)
         macro_position = 0;
         macro_operation = MACRO_INIT;
         macro_active = 1;
+        light_set_macro(macro_key);
     }
 }
 
@@ -134,6 +136,7 @@ macro_run()
                 if (macro_position >= macro_len[macro_key]) {
                     macro_active = 0;
                     led_clear(MACRO_LED_ACTIVE);
+                    light_set_macro(0);
                 }
         }
     }

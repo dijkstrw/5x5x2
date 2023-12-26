@@ -149,16 +149,19 @@ enum {
     COLOR_BACKGROUND,
 
     COLOR_1,
+    COLOR_DESKTOP = COLOR_1,
     COLOR_2,
     COLOR_3,
     COLOR_4,
     COLOR_5,
 
     COLOR_6,
+    COLOR_LAYER = COLOR_6,
     COLOR_7,
     COLOR_8,
     COLOR_9,
     COLOR_10,
+    COLOR_MACRO = COLOR_10,
 };
 
 extern hsv_t palette[PALETTE_NUM];
