@@ -44,7 +44,9 @@ volatile uint16_t rotary_value = 0;
 
 event_t rotary[LAYERS_NUM][ROTARY_NUM] =
 {
-    { _K(VOL_DOWN), _K(VOL_UP) },
+    { _K(VOL_UP), _K(VOL_DOWN) },
+    { _K(VOL_UP), _K(VOL_DOWN) },
+    { _K(VOL_UP), _K(VOL_DOWN) },
 };
 
 void
