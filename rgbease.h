@@ -36,7 +36,8 @@ enum {
     F_COLOR_HOLD,
     F_BRIGHTEN,
     F_DIM,
-    F_RAINBOW,
+    F_RAINBOW_THEN_DIM,
+    F_SLOW_RAINBOW,
     F_BACKLIGHT,
     F_OVERRIDE
 };
@@ -61,14 +62,19 @@ typedef struct {
 
 extern fract8_t rgbintensity;
 
-#define STEP_FAST             0xfe
-#define STEP_LAST             0xff
-#define STEP_RAINBOW          0x03
+#define STEP_FAST                0xfe
+#define STEP_LAST                0xff
 
-#define ROUND_LAST            0xff
-#define ROUND_FIRST           0x00
-#define ROUND_SECOND          0x01
-#define ROUND_THIRD           0x02
+#define ROUND_LAST               0xff
+#define ROUND_FIRST              0x00
+#define ROUND_SECOND             0x01
+#define ROUND_THIRD              0x02
+
+#define SPEED_STEP_FLASH         0x03
+#define HUE_STEP_RAINBOW         0x03
+#define HUE_STEP_SLOW_RAINBOW    0x01
+
+#define TIMER_SLOW_RAINBOW       0x0a
 
 #define EASE(Color, Func, Step, Round, Group) { .color = Color, .f = Func, .step = Step, .round = Round, .group = Group }
 

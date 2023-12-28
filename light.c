@@ -148,13 +148,32 @@ light_set_volume(uint16_t avolume)
     light_apply_state(LIGHT_VOLUME);
 }
 
+static hsv_t
+_light_rainbow_color(uint8_t num, uint8_t i)
+{
+    hsv_t color = HSV_RED;
+    color.h += (HUE_MAX / num) * i;
+
+    return color;
+}
+
 void
 light_apply_state(uint8_t only_type)
 {
     uint8_t r, c;
     uint8_t id, typ;
     uint8_t screen = 0;
+    uint8_t num_backlight = 0, i_backlight = 0;
     hsv_t color;
+
+    for (r = 0; r < ROWS_NUM; r++) {
+        for (c = 0; c < COLS_NUM; c++) {
+            typ = lightmap.data[layer][r][c];
+            if ((typ == LIGHT_BACKLIGHT) || (typ == LIGHT_MACRO)) {
+                num_backlight++;
+            }
+        }
+    }
 
     for (r = 0; r < ROWS_NUM; r++) {
         for (c = 0; c < COLS_NUM; c++) {
@@ -166,7 +185,8 @@ light_apply_state(uint8_t only_type)
 
             switch (typ) {
             case LIGHT_BACKLIGHT:
-                rgbease_set(id, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
+                rgbease_set(id, _light_rainbow_color(num_backlight, i_backlight), F_SLOW_RAINBOW, 0 , 0);
+                i_backlight++;
                 break;
 
             case LIGHT_MACRO:
@@ -174,7 +194,8 @@ light_apply_state(uint8_t only_type)
                     color = palette_get(COLOR_MACRO);
                     rgbease_set(id, color, F_COLOR_FLASHING, 0, 0);
                 } else {
-                    rgbease_set(id, palette[COLOR_BACKGROUND], F_BACKLIGHT, 0 , 0);
+                    rgbease_set(id, _light_rainbow_color(num_backlight, i_backlight), F_SLOW_RAINBOW, 0 , 0);
+                    i_backlight++;
                 }
                 break;
 
@@ -189,8 +210,8 @@ light_apply_state(uint8_t only_type)
                 rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 break;
 
-
             case LIGHT_MUTE:
+            case LIGHT_MIC_MUTE:
                if (light_state.mic_mute) {
                    if (light_state.mute) {
                        color = hsv_red;

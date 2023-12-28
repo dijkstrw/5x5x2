@@ -120,7 +120,7 @@ rgbease_rainbow(uint8_t times)
     hsv_t color = HSV_RED;
 
     for (i = 0; i < RGB_ALL_NUM; i++) {
-        rgbease_set(i, color, F_RAINBOW, 0, times);
+        rgbease_set(i, color, F_RAINBOW_THEN_DIM, 0, times);
         color.h += (HUE_MAX / RGB_ALL_NUM);
     }
 }
@@ -185,7 +185,7 @@ rgbease_advance() {
                 break;
 
             case F_COLOR_FLASH:
-                leds[i].step += 3;
+                leds[i].step += SPEED_STEP_FLASH;
                 step = ease8_inoutquad(leds[i].step);
                 if (leds[i].step == STEP_LAST) {
                     leds[i].round++;
@@ -207,7 +207,7 @@ rgbease_advance() {
                 break;
 
             case F_COLOR_FLASHING:
-                leds[i].step += 3;
+                leds[i].step += SPEED_STEP_FLASH;
                 step = ease8_inoutquad(leds[i].step);
                 if (leds[i].step == STEP_LAST) {
                     leds[i].round++;
@@ -253,9 +253,9 @@ rgbease_advance() {
                 }
                 break;
 
-            case F_RAINBOW:
+            case F_RAINBOW_THEN_DIM:
                 ++leds[i].step;
-                color.h += STEP_RAINBOW;
+                color.h += HUE_STEP_RAINBOW;
                 color.h %= HUE_MAX;
                 leds[i].target.h = color.h;
                 if (leds[i].step == STEP_LAST) {
@@ -263,6 +263,14 @@ rgbease_advance() {
                     if (leds[i].round == 0) {
                         leds[i].f = F_DIM;
                     }
+                }
+                break;
+
+            case F_SLOW_RAINBOW:
+                if ((rgbease_timer % TIMER_SLOW_RAINBOW) == 0) {
+                    color.h += HUE_STEP_SLOW_RAINBOW;
+                    color.h %= HUE_MAX;
+                    leds[i].target.h = color.h;
                 }
                 break;
 
