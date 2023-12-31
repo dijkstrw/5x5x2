@@ -36,6 +36,7 @@ wall_width = 3;              // width of the wall around the enclosure
 bottom_height = 3;           // height of bottom plate
 second_height = 6;           // height of second plate
 third_height = 13.5 - second_height;
+top_height = 1.6;            // height of keys base plate
 
 screw_hole_size = 3;         // hole size, m3 = 3mm
 hole_offset = 3.5;           // offset of hole center to edge
@@ -45,5 +46,9 @@ usb_plug_width = 11;         // width of usb c plug overmoulding
 usb_plug_depth = 24.3;       // depth of usb c plug, contact + overmoulding
 usb_contact_height = 3;      // height of usb c contact
 
+mx_plate_width = 13.7;
+mx_width = 14.5;
+mx_edge_space = 4.75;
+mx_inter_space = 4.5;
 
 $fn = 50;                    // number of fragments in an arc
