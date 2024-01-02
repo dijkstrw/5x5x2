@@ -58,8 +58,7 @@ module second_plate()
     plate(second_height);
     cube([pcb_width, pcb_width, second_height], center = true);
     // room for usb plug
-    translate([0, pcb_width / 2, 0])
-      translate([0, (usb_plug_depth / 2) - wall_width, (plug_height / 2)])
+    translate([0, pcb_width / 2, -second_height / 2])
       usb_plug();
   }
 }
@@ -79,13 +78,13 @@ module top_plate()
     // keys
         translate([-pcb_width / 2,
                -pcb_width / 2,
-               -pcb_thickness / 2])
+               -top_height / 2])
       for (row = [1 : 1 : 5]) {
         for (col = [1 : 1 : 5]) {
-          translate([mx_edge_space + (col - 1) * (mx_width + mx_inter_space) + (mx_width - mx_plate_width) / 2,
-                     mx_edge_space + (row - 1) * (mx_width + mx_inter_space) + (mx_width - mx_plate_width) / 2,
+          translate([mx_edge_space + (col - 1) * (mx_plate_width + mx_inter_space),
+                     mx_edge_space + (row - 1) * (mx_plate_width + mx_inter_space),
                      0])
-            cube([mx_plate_width, mx_plate_width, top_height]);
+            cube([mx_plate_width, mx_plate_width, top_height * 2]);
         }
       }
   }
