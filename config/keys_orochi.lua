@@ -95,30 +95,42 @@ keys.orochi = gears.table.join(
       {description = "pass launcher", group = "launcher"}))
 
 for i = 1, 9 do
-   keys.orochi = gears.table.join(keys.orochi,
-      awful.key({ }, "#" .. i + 190,
-         function()
-            for s in screen do
-               local tag = s.tags[i]
-               if tag then
-                  tag:view_only()
-               end
-            end
-            orochi_set_display(0, i)
-         end,
-         {description = "goto tag " .. i, group = "tags"}),
+    keys.orochi = gears.table.join(keys.orochi,
+        awful.key({ }, "#" .. i + 190,
+            function()
+                for s in screen do
+                   local tag = s.tags[i]
+                   if tag then
+                      tag:view_only()
+                   end
+                end
+                orochi_set_display(0, i)
+            end,
+            {description = "goto tag " .. i, group = "tags"}),
 
-      awful.key({ "Control" }, "#" .. i + 190,
-         function ()
-            for s in screen do
-               local tag = s.tags[i]
-               if tag then
-                  tag.selected = not tag.selected
-               end
-            end
-         end,
-         {description = "add or remove clients from tag " .. i, group = "tags"})
-   )
+        awful.key({ "Control" }, "#" .. i + 190,
+           function ()
+              for s in screen do
+                 local tag = s.tags[i]
+                 if tag then
+                    tag.selected = not tag.selected
+                 end
+              end
+           end,
+           {description = "add or remove clients from tag " .. i, group = "tags"}),
+
+        -- View tag only.
+        awful.key({ superkey }, "#" .. i + 9,
+           function ()
+              local s = mouse.screen
+              local tag = s.tags[i]
+              if tag then
+                 tag:view_only()
+              end
+              orochi_set_display(s.index, i)
+           end,
+           {description = "view tag #"..i, group = "tag"})
+    )
 end
 
 return keys.orochi
