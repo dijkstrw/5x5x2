@@ -97,7 +97,16 @@ light_set(uint8_t l, uint8_t r, uint8_t c, uint8_t v)
         return;
     }
 
-    lightmap.data[l][r][c] = v;
+    if ((v == LIGHT_BACKLIGHT) ||
+        (v == LIGHT_DESKTOP) ||
+        (v == LIGHT_LAYER) ||
+        (v == LIGHT_MACRO) ||
+        (v == LIGHT_MUTE) ||
+        (v == LIGHT_VOLUME)) {
+        lightmap.data[l][r][c] = v;
+    } else {
+        elog("light type unknown");
+    }
 }
 
 void
@@ -111,6 +120,9 @@ light_set_desktop(uint8_t ascreen, uint8_t adisplay)
         }
     } else {
         light_state.desktop[s - 1] = adisplay;
+        if (s > light_state.max_screen) {
+            light_state.max_screen = s;
+        }
     }
     light_apply_state(LIGHT_DESKTOP);
 }
@@ -189,6 +201,17 @@ light_apply_state(uint8_t only_type)
                 i_backlight++;
                 break;
 
+            case LIGHT_DESKTOP:
+                color = palette_get(COLOR_DESKTOP + light_state.desktop[screen]);
+                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
+                screen = (screen + 1) % light_state.max_screen;
+                break;
+
+            case LIGHT_LAYER:
+                color = palette_get(COLOR_LAYER + layer);
+                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
+                break;
+
             case LIGHT_MACRO:
                 if (macro_active) {
                     color = palette_get(COLOR_MACRO);
@@ -197,17 +220,6 @@ light_apply_state(uint8_t only_type)
                     rgbease_set(id, _light_rainbow_color(num_backlight, i_backlight), F_SLOW_RAINBOW, 0 , 0);
                     i_backlight++;
                 }
-                break;
-
-            case LIGHT_DESKTOP:
-                color = palette_get(COLOR_DESKTOP + light_state.desktop[screen]);
-                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
-                screen = (screen + 1) % SCREENS_NUM;
-                break;
-
-            case LIGHT_LAYER:
-                color = palette_get(COLOR_LAYER + layer);
-                rgbease_set(id, color, F_COLOR_HOLD, 0, 0);
                 break;
 
             case LIGHT_MUTE:

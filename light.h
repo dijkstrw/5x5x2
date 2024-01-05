@@ -110,6 +110,7 @@ typedef struct {
 
 typedef struct {
     uint8_t desktop[SCREENS_NUM];
+    uint8_t max_screen;
     uint8_t mic_mute;
     uint8_t mute;
     uint16_t volume;

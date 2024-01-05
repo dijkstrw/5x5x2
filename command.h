@@ -30,27 +30,31 @@
 
 #include "ring.h"
 
-#define CMD_FLASH_CLEAR   'Z'
-#define CMD_FLASH_LOAD    'L'
-#define CMD_FLASH_SAVE    'S'
-#define CMD_IDENTIFY      'i'
-#define CMD_BACKCOLOR_SET 'B'
-#define CMD_COLOR_SET     'C'
-#define CMD_DUMP          'd'
-#define CMD_DISPLAY_SET   'D'
-#define CMD_INTENSITY_SET 'I'
-#define CMD_KEYMAP_SET    'K'
-#define CMD_LIGHT_SET     'G'
-#define CMD_MACRO_CLEAR   'A'
-#define CMD_MACRO_SET     'M'
-#define CMD_NKRO_SET      'N'
-#define CMD_PALETTE_SET   'P'
-#define CMD_ROTARY_SET    'R'
+enum {
+    CMD_BACKCOLOR_SET = 'B',
+    CMD_COLOR_SET     = 'C',
+    CMD_DISPLAY_SET   = 'D',
+    CMD_DUMP          = 'd',
+    CMD_FLASH_CLEAR   = 'Z',
+    CMD_FLASH_LOAD    = 'L',
+    CMD_FLASH_SAVE    = 'S',
+    CMD_IDENTIFY      = 'i',
+    CMD_INTENSITY_SET = 'I',
+    CMD_KEYMAP_SET    = 'K',
+    CMD_LIGHT_SET     = 'G',
+    CMD_MACRO_CLEAR   = 'A',
+    CMD_MACRO_SET     = 'M',
+    CMD_NKRO_SET      = 'N',
+    CMD_PALETTE_SET   = 'P',
+    CMD_ROTARY_SET    = 'R',
+};
 
-#define DUMP_KEYMAP       'k'
-#define DUMP_LIGHT        'l'
-#define DUMP_ROTARY       'r'
-#define DUMP_PALETTE      'p'
+enum {
+    DUMP_KEYMAP       = 'k',
+    DUMP_LIGHT        = 'g',
+    DUMP_PALETTE      = 'p',
+    DUMP_ROTARY       = 'r',
+};
 
 void command_process(struct ring *input_ring);
 

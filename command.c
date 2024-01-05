@@ -189,9 +189,10 @@ command_set_light(struct ring *input_ring)
     alayer = read_hex_8(input_ring);
     arow = read_hex_8(input_ring);
     acolumn = read_hex_8(input_ring);
-    avalue = read_hex_8(input_ring);
 
-    light_set(alayer, arow, acolumn, avalue);
+    if (ring_read_ch(input_ring, &avalue) != -1) {
+        light_set(alayer, arow, acolumn, avalue);
+    }
 }
 
 static void
@@ -374,13 +375,13 @@ command_process(struct ring *input_ring)
                 printfnl("dt                - dump type: [l]ight, [k]eymap, [r]otary, [p]alette");
                 printfnl("B[rrggbb]*8       - set color rgb of bottom layer");
                 printfnl("C[rrggbb]*25      - set color rgb of top layer");
-                printfnl("Grrccgg           - set light: layer, row, column, group");
+                printfnl("Dt                - tell keyboard about a desktop event");
+                printfnl("Grrcct            - set light: layer, row, column, type");
                 printfnl("Iii               - set backlight / bottom layer intensity");
                 printfnl("Kllrrcctta1a2a3   - set keymap layer, row, column, type, arg1-3");
-                printfnl("m                 - clear all macro keys");
+                printfnl("A                 - clear all macro keys");
                 printfnl("Mnnstring         - set macro nn with string");
-                printfnl("n                 - clear nkro");
-                printfnl("N                 - set nkro");
+                printfnl("Nnn               - set nkro");
                 printfnl("Pnnhhhhssvv       - set palette: number, hue, saturation, value");
                 printfnl("Rllddtta1a2a3     - set rotary layer, direction, type, arg1-3");
                 printfnl("L                 - load configuration from flash");

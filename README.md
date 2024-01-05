@@ -20,8 +20,7 @@ Features you expect given the above picture:
 Advanced features:
 - adjustable speed macrokeys to e.g. emit passwords
 - all leds individually addressable, colorchord support
-- leds can be assigned to groups
-- a number of different ease functions to light led groups at keypresses
+- leds can light on e.g. volume or desktop changes
 - configuration can be adjusted and flashed in userflash
 - and an automouse that can simulate fast clicking
 
@@ -39,6 +38,9 @@ This is my macropad; it contains three layers:
   apps, compose key, quick jump to password layer and a number of app
   starting keys. Rotary dial controls system volume. Rotary press
   mutes/unmutes.
+
+  Rgbleds show sound volume, current workspace / screen and active
+  layer.
 
 - numeric keypad, for when tkl is not enough
 
@@ -95,9 +97,10 @@ The available commands are:
     ?  - show a terse description of available commands.
 
     i  - show usb info strings; contains the git-describe tag of the
-         current firmware, so mission critical to me, useless to
-         everybody else.
+         current firmware.
 
+    d  - dump configuration of a named subsystem, see below.
+    dg - dump the keymap light group
     dk - dump the keymap
     dp - dump the palette
     dr - dump the rotary configuration
@@ -108,8 +111,22 @@ The available commands are:
     C  - set the top set of 25 leds (frontlight) to custom rgb values.
          Takes a RGB argument of the form <rgb:6> times 25 for all leds.
 
+    D  - tell keyboard about an event that can be translated into a rgb
+         light event, see below.
+    DD - <screen><display> set current desktop display
+    DM - <mute>            set sound output mute status
+    DR - <mute>            set sound input/record mute
+    DV - <volume:4>        set sound volume
+         See config directory for a program that emits these events to the
+         keyboard.
+
+    G  - set light map for a key, takes argument of the form
+         <layer><row><column><value>
+
+    I  - set the rgb light intensity.
+
     K  - redefine a key in the keymap, takes argument of the form
-         <layer><row><column><type><arg1><arg2><arg3>.
+         <layer><row><column><type><arg1><arg2><arg3>
 
     A  - clear all macro keys.
 
@@ -125,7 +142,7 @@ The available commands are:
          <number><hue:4><saturation><value>
 
     R  - redefine the rotary command, takes a argument of
-         the form <layer><direction><type><arg1><arg2><arg3>.
+         the form <layer><direction><type><arg1><arg2><arg3>
 
     L  - load configuration from flash
 
@@ -135,6 +152,31 @@ The available commands are:
          next powerup.
 
 Command interpretation starts after receiving a newline.
+
+Light events
+------------
+
+The keyboard will show desktop events as rgbled changes. This works in
+a number of steps:
+
+- There is a host program that connects to the serial port, monitors
+  sound and workspace changes and communicates that back to the
+  keyboard. The program can be found in
+  [susanoo.py](config/susanoo.py). Note that workspace changes sent
+  via a fifo using the desktop manager and
+  [configuration](config/keys_orochi.lua).
+
+- Incoming events are mapped to be shown on particular leds using the
+  lightmap command.
+
+- The events all have their own displays:
+
+         B - backlight    - slow rainbow easing
+         D - desktop      - desktop display mapped over palette
+         L - layer        - layer mapped over palette
+         m - macro        - if macro active, else backlight
+         M - sound mute   - different colors for mute status
+         V - volume       - volume mapped to color
 
 Palette
 -------
